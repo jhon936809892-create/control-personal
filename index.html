@@ -2,27 +2,31 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Control PEXT - Bantel</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .bg-dark { background-color: #0F172A; }
     .card-dark { background-color: #1E293B; border-color: #334155; }
     .btn-disabled { opacity: 0.35; cursor: not-allowed !important; pointer-events: none; }
+    /* Prevenir zoom automático en inputs en iOS al hacer focus */
+    @media (max-width: 768px) {
+      input, select, textarea { font-size: 16px !important; }
+    }
   </style>
 </head>
-<body class="bg-dark text-slate-100 min-h-screen font-sans flex flex-col justify-between">
+<body class="bg-dark text-slate-100 min-h-screen font-sans flex flex-col justify-between antialiased selection:bg-emerald-500 selection:text-slate-950">
 
-  <!-- BARRA DE NAVEGACIÓN CON SALUDO -->
-  <header id="appHeader" class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50 shadow-md hidden">
-    <div class="max-w-5xl mx-auto flex justify-between items-center">
+  <!-- BARRA DE NAVEGACIÓN ADAPTABLE -->
+  <header id="appHeader" class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-3 py-3 sticky top-0 z-50 shadow-md hidden">
+    <div class="max-w-5xl mx-auto flex flex-wrap justify-between items-center gap-2">
       <div class="flex items-center space-x-2">
-        <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
-        <span class="font-extrabold text-emerald-400 text-lg tracking-wide">PEXT CONTROL - BANTEL</span>
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+        <span class="font-extrabold text-emerald-400 text-sm sm:text-base tracking-wide">PEXT CONTROL</span>
       </div>
-      <div class="flex items-center space-x-3">
-        <span id="userInfo" class="text-xs font-bold bg-slate-800 text-emerald-400 px-3 py-1.5 rounded-xl border border-slate-700"></span>
-        <button onclick="cerrarSesion()" class="px-3 py-1.5 rounded-xl text-xs font-bold transition bg-rose-900/40 text-rose-300 border border-rose-800 hover:bg-rose-900/70">
+      <div class="flex items-center space-x-2">
+        <span id="userInfo" class="text-[11px] sm:text-xs font-bold bg-slate-800 text-emerald-400 px-2.5 py-1.5 rounded-xl border border-slate-700 truncate max-w-[160px] sm:max-w-xs"></span>
+        <button onclick="cerrarSesion()" class="px-2.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition bg-rose-900/40 text-rose-300 border border-rose-800 hover:bg-rose-900/70 whitespace-nowrap">
           🚪 Salir
         </button>
       </div>
@@ -30,62 +34,66 @@
   </header>
 
   <!-- CONTENIDO PRINCIPAL -->
-  <main class="max-w-5xl mx-auto w-full p-4 flex-grow flex items-center justify-center">
+  <main class="max-w-5xl mx-auto w-full p-3 sm:p-5 flex-grow flex items-center justify-center">
 
     <!-- ==================== MÓDULO DE LOGIN ==================== -->
     <section id="vistaLogin" class="w-full max-w-sm my-auto">
-      <div class="card-dark border p-6 rounded-2xl shadow-2xl">
-        <div class="text-center mb-6">
+      <div class="card-dark border p-5 sm:p-6 rounded-2xl shadow-2xl">
+        <div class="text-center mb-5">
           <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
             <span class="text-2xl">🔒</span>
           </div>
-          <h2 class="text-xl font-extrabold text-emerald-400">Iniciar Sesión</h2>
-          <p class="text-xs text-slate-400 mt-1">Control de Campo Bantel PEXT</p>
+          <h2 class="text-lg sm:text-xl font-extrabold text-emerald-400">Iniciar Sesión</h2>
+          <p class="text-[11px] sm:text-xs text-slate-400 mt-1">Control de Campo Bantel PEXT</p>
         </div>
 
-        <form onsubmit="ejecutarLogin(event)" class="space-y-4">
+        <form onsubmit="ejecutarLogin(event)" class="space-y-3.5">
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Usuario:</label>
-            <input type="text" id="inputUsuario" placeholder="Ej: admin o cuadrilla1" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+            <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">Usuario:</label>
+            <input type="text" id="inputUsuario" placeholder="Ej: admin o cuadrilla1" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm">
           </div>
 
           <div>
-            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">PIN / Contraseña:</label>
-            <input type="password" id="inputPassword" placeholder="••••" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+            <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">PIN / Contraseña:</label>
+            <input type="password" id="inputPassword" placeholder="••••" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm">
           </div>
 
-          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold py-3.5 rounded-xl shadow-lg transition text-sm mt-2">
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold py-3.5 rounded-xl shadow-lg transition text-xs sm:text-sm mt-2">
             Ingresar
           </button>
         </form>
 
-        <div id="loginError" class="mt-4 p-3 bg-rose-950 border border-rose-800 text-rose-300 text-xs font-semibold rounded-xl text-center hidden">
+        <div id="loginError" class="mt-3 p-3 bg-rose-950 border border-rose-800 text-rose-300 text-xs font-semibold rounded-xl text-center hidden">
           Usuario o PIN incorrecto.
         </div>
 
-       
+        <div class="mt-5 pt-3 border-t border-slate-800 text-[11px] text-slate-500 space-y-0.5">
+          <p class="font-bold text-slate-400 mb-1">Accesos predeterminados:</p>
+          <p>• Admin: <strong>admin</strong> (1234)</p>
+          <p>• Técnico 1: <strong>cuadrilla1</strong> (1111)</p>
+        </div>
       </div>
     </section>
 
     <!-- ==================== VISTA TÉCNICO ==================== -->
-    <section id="vistaTecnico" class="w-full space-y-6 hidden max-w-md mx-auto">
-      <div class="card-dark border p-5 rounded-2xl shadow-xl">
+    <section id="vistaTecnico" class="w-full space-y-4 hidden max-w-md mx-auto my-auto">
+      <div class="card-dark border p-4 sm:p-5 rounded-2xl shadow-xl">
         <div class="text-center mb-4">
-          <span id="lblCuadrillaActiva" class="inline-block px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-2"></span>
-          <h2 class="text-xl font-bold text-slate-100">Flujo Secuencial de Campo</h2>
+          <span id="lblCuadrillaActiva" class="inline-block px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-1"></span>
+          <h2 class="text-base sm:text-lg font-bold text-slate-100">Flujo Secuencial de Campo</h2>
         </div>
 
-        <div class="space-y-3 mb-4">
-          <button id="btnSalidaBase" onclick="marcarSalidaBase()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold py-3.5 rounded-xl transition flex items-center justify-between px-4">
+        <div class="space-y-3 mb-3">
+          <button id="btnSalidaBase" onclick="marcarSalidaBase()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold py-3.5 rounded-xl transition flex items-center justify-between px-4 text-xs sm:text-sm">
             <span>🚀 1. Salida de Base</span>
-            <span id="lblEstadoSalida" class="text-xs text-amber-400">Pendiente</span>
+            <span id="lblEstadoSalida" class="text-[11px] text-amber-400">Pendiente</span>
           </button>
         </div>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 mb-4">
-          <div class="flex justify-between items-center">
-            <span id="lblPuntoActual" class="text-xs font-bold text-emerald-400 uppercase">Sin Punto Activo</span>
-            <button id="btnNuevoPunto" onclick="solicitarNombrePunto()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs px-3 py-2 rounded-xl transition shadow">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 sm:p-4 space-y-3 mb-3">
+          <div class="flex justify-between items-center gap-2">
+            <span id="lblPuntoActual" class="text-[11px] sm:text-xs font-bold text-emerald-400 uppercase truncate max-w-[200px]">Sin Punto Activo</span>
+            <button id="btnNuevoPunto" onclick="solicitarNombrePunto()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-[11px] sm:text-xs px-3 py-2 rounded-xl transition shadow whitespace-nowrap">
               ➕ Nuevo Punto
             </button>
           </div>
@@ -103,60 +111,60 @@
           </div>
         </div>
 
-        <div class="space-y-3 mb-4">
-          <button id="btnRegresoBase" onclick="marcarRegresoBase()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold py-3.5 rounded-xl transition flex items-center justify-between px-4">
+        <div class="space-y-3 mb-2">
+          <button id="btnRegresoBase" onclick="marcarRegresoBase()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold py-3.5 rounded-xl transition flex items-center justify-between px-4 text-xs sm:text-sm">
             <span>🏢 4. Regreso a Base</span>
-            <span id="lblEstadoRegreso" class="text-xs text-rose-400">Bloqueado</span>
+            <span id="lblEstadoRegreso" class="text-[11px] text-rose-400">Bloqueado</span>
           </button>
         </div>
 
-        <div id="statusAlert" class="mt-4 p-3 rounded-xl text-center text-xs font-semibold hidden"></div>
+        <div id="statusAlert" class="mt-3 p-3 rounded-xl text-center text-xs font-semibold hidden"></div>
       </div>
     </section>
 
     <!-- ==================== VISTA MONITOREO & ADMIN ==================== -->
-    <section id="vistaMonitoreo" class="w-full space-y-6 hidden">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <section id="vistaMonitoreo" class="w-full space-y-4 sm:space-y-6 hidden">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
-          <h2 id="tituloPanelMonitoreo" class="text-2xl font-bold text-emerald-400">Panel de Control & Monitoreo</h2>
-          <p class="text-xs text-slate-400">Control de asistencia, rutas y tiempos por fecha</p>
+          <h2 id="tituloPanelMonitoreo" class="text-xl sm:text-2xl font-bold text-emerald-400">Panel de Control & Monitoreo</h2>
+          <p class="text-[11px] sm:text-xs text-slate-400">Control de asistencia, rutas y tiempos por fecha</p>
         </div>
-        <div class="flex space-x-2">
-          <button id="btnExportar" onclick="exportarCSV()" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 px-3 py-2 rounded-xl text-xs font-bold transition hidden">
+        <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+          <button id="btnExportar" onclick="exportarCSV()" class="flex-1 sm:flex-none bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 px-3 py-2 rounded-xl text-xs font-bold transition hidden">
             📥 Exportar CSV
           </button>
-          <button id="btnLimpiarHistorial" onclick="limpiarRegistros()" class="bg-rose-900/30 hover:bg-rose-900/50 text-rose-400 border border-rose-500/30 px-3 py-2 rounded-xl text-xs font-bold transition hidden">
+          <button id="btnLimpiarHistorial" onclick="limpiarRegistros()" class="flex-1 sm:flex-none bg-rose-900/30 hover:bg-rose-900/50 text-rose-400 border border-rose-500/30 px-3 py-2 rounded-xl text-xs font-bold transition hidden">
             🗑️ Limpiar Historial
           </button>
         </div>
       </div>
 
       <!-- SECCIÓN 1: CALENDARIO DE CONTROL DIARIO -->
-      <div id="seccionCalendario" class="card-dark border rounded-2xl p-5 shadow-xl space-y-4 hidden">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 pb-3 border-b border-slate-800">
+      <div id="seccionCalendario" class="card-dark border rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 hidden">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-800">
           <div>
-            <h3 class="text-sm font-bold text-emerald-400">📅 Calendario de Control Diario</h3>
-            <p class="text-[11px] text-slate-400">Selecciona o filtra cualquier día para auditar movimientos</p>
+            <h3 class="text-xs sm:text-sm font-bold text-emerald-400">📅 Calendario de Control Diario</h3>
+            <p class="text-[10px] sm:text-[11px] text-slate-400">Selecciona o filtra cualquier día para auditar movimientos</p>
           </div>
-          <div class="flex items-center gap-2">
-            <input type="date" id="calendarioDiario" onchange="actualizarVistaCalendario()" class="bg-slate-900 border border-slate-700 text-emerald-400 font-bold text-xs p-2.5 rounded-xl outline-none focus:ring-1 focus:ring-emerald-500">
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <input type="date" id="calendarioDiario" onchange="actualizarVistaCalendario()" class="flex-1 sm:flex-none bg-slate-900 border border-slate-700 text-emerald-400 font-bold text-xs p-2.5 rounded-xl outline-none focus:ring-1 focus:ring-emerald-500">
             <button onclick="seleccionarHoy()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold px-3 py-2.5 rounded-xl transition">
               Hoy
             </button>
           </div>
         </div>
 
-        <div id="resumenDiaContainer" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+        <div id="resumenDiaContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
       </div>
 
       <!-- SECCIÓN 2: LISTADO DETALLADO DE EVENTOS DEL DÍA -->
-      <div id="seccionListado" class="card-dark border rounded-2xl overflow-hidden shadow-2xl p-4 space-y-3 hidden">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-800 pb-2">
-          <h3 class="text-sm font-bold text-slate-200">
-            📋 Puntos y Tiempos del Día: <span id="lblFechaSeleccionada" class="text-emerald-400">--/--/----</span>
+      <div id="seccionListado" class="card-dark border rounded-2xl overflow-hidden shadow-2xl p-3 sm:p-4 space-y-3 hidden">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-2">
+          <h3 class="text-xs sm:text-sm font-bold text-slate-200 truncate max-w-full">
+            📋 Puntos del Día: <span id="lblFechaSeleccionada" class="text-emerald-400">--/--/----</span>
           </h3>
-          <div>
-            <select id="filtroCuadrillaCalendario" onchange="renderizarListadoEventosDia()" class="bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2 rounded-xl outline-none">
+          <div class="w-full sm:w-auto">
+            <select id="filtroCuadrillaCalendario" onchange="renderizarListadoEventosDia()" class="w-full sm:w-auto bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2 rounded-xl outline-none">
               <option value="todas">Todas las Cuadrillas</option>
             </select>
           </div>
@@ -166,18 +174,18 @@
       </div>
 
       <!-- SECCIÓN 3: GESTIÓN DE USUARIOS CON TABLA Y CREDENCIALES -->
-      <div id="seccionGestionUsuarios" class="card-dark border rounded-2xl p-5 shadow-2xl space-y-4 hidden">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-          <h3 class="text-base font-bold text-emerald-400">👥 Gestión de Personal y Credenciales</h3>
-          <button onclick="abrirModalCrear()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs px-4 py-2.5 rounded-xl transition shadow">
+      <div id="seccionGestionUsuarios" class="card-dark border rounded-2xl p-4 sm:p-5 shadow-2xl space-y-4 hidden">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-3">
+          <h3 class="text-sm sm:text-base font-bold text-emerald-400">👥 Gestión de Personal y Credenciales</h3>
+          <button onclick="abrirModalCrear()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs px-4 py-2.5 rounded-xl transition shadow">
             ➕ Registrar Nuevo Personal
           </button>
         </div>
 
-        <div class="pt-2">
-          <h4 class="text-xs font-bold text-slate-300 mb-3">Lista de Personal Registrado (Credenciales y Datos):</h4>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
+        <div class="pt-1">
+          <h4 class="text-xs font-bold text-slate-300 mb-2">Lista de Personal Registrado:</h4>
+          <div class="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+            <table class="w-full text-left text-xs whitespace-nowrap sm:whitespace-normal">
               <thead class="bg-slate-900 text-slate-400 uppercase text-[10px]">
                 <tr>
                   <th class="p-2">Usuario (ID)</th>
@@ -199,17 +207,17 @@
   </main>
 
   <!-- ==================== MODAL FLOTANTE (CREAR / EDITAR) ==================== -->
-  <div id="modalPersonal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-    <div class="card-dark border max-w-lg w-full p-6 rounded-2xl shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 id="modalTitulo" class="text-base font-extrabold text-emerald-400">📝 Registrar Nuevo Personal</h3>
-        <button onclick="cerrarModalPersonal()" class="text-slate-400 hover:text-rose-400 font-bold text-sm">✕ Cerrar</button>
+  <div id="modalPersonal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 hidden overflow-y-auto">
+    <div class="card-dark border max-w-lg w-full p-4 sm:p-6 rounded-2xl shadow-2xl space-y-3 my-auto max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
+        <h3 id="modalTitulo" class="text-sm sm:text-base font-extrabold text-emerald-400">📝 Registrar Nuevo Personal</h3>
+        <button onclick="cerrarModalPersonal()" class="text-slate-400 hover:text-rose-400 font-bold text-xs p-1">✕ Cerrar</button>
       </div>
 
       <form onsubmit="guardarPersonal(event)" class="space-y-3">
         <input type="hidden" id="editandoId" value="">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nombres:</label>
             <input type="text" id="nuNombres" placeholder="Ej: Jhon Alejandro" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none">
@@ -220,7 +228,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-[11px] font-semibold text-slate-400 mb-1">Apellido Materno:</label>
             <input type="text" id="nuApeMaterno" placeholder="Ej: Angeles" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none">
@@ -231,7 +239,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-[11px] font-semibold text-slate-400 mb-1">Teléfono (Exacto 9 dígitos):</label>
             <input type="text" id="nuTelefono" placeholder="Ej: 944740061" maxlength="9" oninput="validarSoloNumeros(this, 9)" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none tracking-wider font-mono">
@@ -257,7 +265,7 @@
           </select>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800">
           <div>
             <label class="block text-[11px] font-semibold text-slate-400 mb-1">Usuario ID (Login):</label>
             <input type="text" id="nuUsuario" placeholder="ej: cuadrilla1" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none font-mono">
@@ -268,11 +276,11 @@
           </div>
         </div>
 
-        <div class="flex justify-end space-x-2 pt-3">
-          <button type="button" onclick="cerrarModalPersonal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl transition">
+        <div class="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-3">
+          <button type="button" onclick="cerrarModalPersonal()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-3 sm:py-2.5 rounded-xl transition">
             Cancelar
           </button>
-          <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs px-5 py-2.5 rounded-xl transition shadow">
+          <button type="submit" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs px-5 py-3 sm:py-2.5 rounded-xl transition shadow">
             Guardar Cambios
           </button>
         </div>
@@ -280,8 +288,8 @@
     </div>
   </div>
 
-  <footer class="text-center text-slate-600 text-xs py-4 border-t border-slate-800/50">
-    Bantel PEXT Control &bull; Asignación de Cuadrillas &bull; Cambio 00:00 hrs
+  <footer class="text-center text-slate-600 text-[11px] py-3 border-t border-slate-800/50">
+    Bantel PEXT Control &bull; Cambio 00:00 hrs
   </footer>
 
   <!-- SCRIPT -->
@@ -403,7 +411,7 @@
 
       const nombreCorto = obtenerNombreCorto(usuarioSesion);
       const cargoTexto = usuarioSesion.cargo ? usuarioSesion.cargo.toUpperCase() : (usuarioSesion.esTecnico ? 'TÉCNICO' : 'ADMIN');
-      document.getElementById('userInfo').innerText = `👋 Hola, ${nombreCorto} (${cargoTexto})`;
+      document.getElementById('userInfo').innerText = `${nombreCorto} (${cargoTexto})`;
 
       if (usuarioSesion.esTecnico) {
         document.getElementById('vistaTecnico').classList.remove('hidden');
@@ -543,10 +551,10 @@
 
       if (estadoCiclo.salioDeBase) {
         btnSalida.disabled = true; btnSalida.classList.add('btn-disabled');
-        lblSalida.innerText = `✅ Salida #${estadoCiclo.jornadaNum}`; lblSalida.className = "text-xs text-emerald-400 font-bold";
+        lblSalida.innerText = `✅ Salida #${estadoCiclo.jornadaNum}`; lblSalida.className = "text-[11px] text-emerald-400 font-bold";
       } else {
         btnSalida.disabled = false; btnSalida.classList.remove('btn-disabled');
-        lblSalida.innerText = `Pendiente (Salida #${estadoCiclo.jornadaNum})`; lblSalida.className = "text-xs text-amber-400";
+        lblSalida.innerText = `Pendiente (#${estadoCiclo.jornadaNum})`; lblSalida.className = "text-[11px] text-amber-400";
       }
 
       const tienePuntoPendiente = (estadoCiclo.puntoActivoNum > 0 && !estadoCiclo.finTrabajoMarcado);
@@ -557,7 +565,7 @@
       }
 
       if (estadoCiclo.puntoActivoNum > 0) {
-        lblPunto.innerText = `[${estadoCiclo.nombrePuntoActivo}] S#${estadoCiclo.jornadaNum} - P#${estadoCiclo.puntoActivoNum} ${estadoCiclo.finTrabajoMarcado ? '(Finalizado)' : 'en Proceso'}`;
+        lblPunto.innerText = `[${estadoCiclo.nombrePuntoActivo}] S#${estadoCiclo.jornadaNum}-P#${estadoCiclo.puntoActivoNum}`;
         btnLlegada.disabled = estadoCiclo.llegadaPuntoMarcada;
         if (estadoCiclo.llegadaPuntoMarcada) btnLlegada.classList.add('btn-disabled');
         else btnLlegada.classList.remove('btn-disabled');
@@ -575,10 +583,10 @@
       const cicloActualTerminado = (estadoCiclo.puntoActivoNum > 0 && estadoCiclo.finTrabajoMarcado);
       if (estadoCiclo.salioDeBase && cicloActualTerminado) {
         btnRegreso.disabled = false; btnRegreso.classList.remove('btn-disabled');
-        lblRegreso.innerText = "✅ Listo para volver"; lblRegreso.className = "text-xs text-emerald-400 font-bold";
+        lblRegreso.innerText = "✅ Listo para volver"; lblRegreso.className = "text-[11px] text-emerald-400 font-bold";
       } else {
         btnRegreso.disabled = true; btnRegreso.classList.add('btn-disabled');
-        lblRegreso.innerText = "Bloqueado"; lblRegreso.className = "text-xs text-rose-400";
+        lblRegreso.innerText = "Bloqueado"; lblRegreso.className = "text-[11px] text-rose-400";
       }
     }
 
@@ -679,12 +687,12 @@
       regs.unshift(nuevo);
       localStorage.setItem('registros_cuadrillas', JSON.stringify(regs));
       
-      mostrarNotificacion(`✅ Registrado: ${hito} - ${lugar} a las ${horaStr}`);
+      mostrarNotificacion(`✅ Registrado: ${hito} a las ${horaStr}`);
     }
 
     function mostrarNotificacion(txt) {
       const alertBox = document.getElementById('statusAlert');
-      alertBox.className = "mt-4 p-3 rounded-xl text-center text-xs font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800 block";
+      alertBox.className = "mt-3 p-3 rounded-xl text-center text-xs font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800 block";
       alertBox.innerText = txt;
     }
 
@@ -770,7 +778,7 @@
 
       const claves = Object.keys(grupos);
       if (claves.length === 0) {
-        cont.innerHTML = `<div class="p-6 text-center text-xs text-slate-500">No hay puntos de trabajo registrados en esta fecha (${fechaIso}).</div>`;
+        cont.innerHTML = `<div class="p-5 text-center text-xs text-slate-500">No hay puntos registrados en esta fecha.</div>`;
         return;
       }
 
@@ -787,31 +795,31 @@
           const mins = Math.floor(diffMs / 60000);
           const hrs = Math.floor(mins / 60);
           const restoMins = mins % 60;
-          tiempoCalculadoTxt = `⏱️ Tiempo de Trabajo: ${hrs > 0 ? hrs + 'h ' : ''}${restoMins} min`;
+          tiempoCalculadoTxt = `⏱️ Trabajo: ${hrs > 0 ? hrs + 'h ' : ''}${restoMins} min`;
           badgeColor = "bg-emerald-950/60 text-emerald-300 border-emerald-800";
         }
 
         cont.innerHTML += `
           <div class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow">
-            <button onclick="toggleDetalleEvento('evento_${idx}')" class="w-full text-left p-3.5 flex justify-between items-center hover:bg-slate-900/50 transition">
-              <div class="space-y-0.5">
-                <span class="text-emerald-400 font-extrabold text-xs">📍 ${clave}</span>
-                <span class="block px-2 py-0.5 rounded text-[11px] font-bold border w-max ${badgeColor}">
+            <button onclick="toggleDetalleEvento('evento_${idx}')" class="w-full text-left p-3 flex justify-between items-center hover:bg-slate-900/50 transition gap-2">
+              <div class="space-y-0.5 truncate">
+                <span class="text-emerald-400 font-extrabold text-xs block truncate">📍 ${clave}</span>
+                <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${badgeColor}">
                   ${tiempoCalculadoTxt}
                 </span>
               </div>
-              <span class="text-slate-400 text-xs font-semibold underline">Ver Detalles 🔍 ▼</span>
+              <span class="text-slate-400 text-[11px] font-semibold whitespace-nowrap underline">Detalles 🔍</span>
             </button>
 
             <div id="evento_${idx}" class="hidden p-3 border-t border-slate-800 bg-slate-900/60 space-y-2 text-xs">
               ${items.map(it => `
-                <div class="flex justify-between items-center p-2 rounded bg-slate-950 border border-slate-800">
-                  <div>
+                <div class="flex justify-between items-center p-2 rounded bg-slate-950 border border-slate-800 gap-2">
+                  <div class="truncate">
                     <span class="font-bold text-emerald-300">${it.hito}</span>
-                    <span class="text-[10px] text-slate-400 block">⏰ Hora: ${it.hora}</span>
+                    <span class="text-[10px] text-slate-400 block">⏰ ${it.hora}</span>
                   </div>
                   <div>
-                    ${it.lat ? `<a href="https://maps.google.com/?q=${it.lat},${it.lng}" target="_blank" class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-1 rounded font-bold text-[11px] hover:bg-emerald-900 transition">Ver GPS 📍</a>` : '<span class="text-slate-600 text-[10px]">Sin GPS</span>'}
+                    ${it.lat ? `<a href="https://maps.google.com/?q=${it.lat},${it.lng}" target="_blank" class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-1 rounded font-bold text-[10px] hover:bg-emerald-900 transition whitespace-nowrap">Ver GPS 📍</a>` : '<span class="text-slate-600 text-[10px]">Sin GPS</span>'}
                   </div>
                 </div>
               `).join('')}
