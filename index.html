@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Control de Cuadrillas - PEXT</title>
+  <title>Control PEXT - Bantel</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .bg-dark { background-color: #0F172A; }
@@ -13,12 +13,12 @@
 </head>
 <body class="bg-dark text-slate-100 min-h-screen font-sans flex flex-col justify-between">
 
-  <!-- BARRA DE NAVEGACIÓN -->
+  <!-- BARRA DE NAVEGACIÓN CON SALUDO -->
   <header id="appHeader" class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50 shadow-md hidden">
     <div class="max-w-5xl mx-auto flex justify-between items-center">
       <div class="flex items-center space-x-2">
         <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
-        <span class="font-extrabold text-emerald-400 text-lg tracking-wide">PEXT CONTROL</span>
+        <span class="font-extrabold text-emerald-400 text-lg tracking-wide">PEXT CONTROL - BANTEL</span>
       </div>
       <div class="flex items-center space-x-3">
         <span id="userInfo" class="text-xs font-bold bg-slate-800 text-emerald-400 px-3 py-1.5 rounded-xl border border-slate-700"></span>
@@ -40,13 +40,13 @@
             <span class="text-2xl">🔒</span>
           </div>
           <h2 class="text-xl font-extrabold text-emerald-400">Iniciar Sesión</h2>
-          <p class="text-xs text-slate-400 mt-1">Control de Campo PEXT</p>
+          <p class="text-xs text-slate-400 mt-1">Control de Campo Bantel PEXT</p>
         </div>
 
         <form onsubmit="ejecutarLogin(event)" class="space-y-4">
           <div>
             <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Usuario:</label>
-            <input type="text" id="inputUsuario" placeholder="Ej: cuadrilla1 o admin" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+            <input type="text" id="inputUsuario" placeholder="Ej: admin o cuadrilla1" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
           </div>
 
           <div>
@@ -65,13 +65,13 @@
 
         <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-500">
           <p class="font-bold text-slate-400 mb-1">Accesos predeterminados:</p>
-          <p>• Técnicos: <strong>cuadrilla1</strong> (1111), <strong>cuadrilla2</strong> (2222), <strong>cuadrilla3</strong> (3333)</p>
           <p>• Admin: <strong>admin</strong> (1234)</p>
+          <p>• Técnico 1: <strong>cuadrilla1</strong> (1111)</p>
         </div>
       </div>
     </section>
 
-    <!-- ==================== VISTA TÉCNICO (LIMPIA) ==================== -->
+    <!-- ==================== VISTA TÉCNICO ==================== -->
     <section id="vistaTecnico" class="w-full space-y-6 hidden max-w-md mx-auto">
       <div class="card-dark border p-5 rounded-2xl shadow-xl">
         <div class="text-center mb-4">
@@ -79,7 +79,6 @@
           <h2 class="text-xl font-bold text-slate-100">Flujo Secuencial de Campo</h2>
         </div>
 
-        <!-- Paso 1: Salida de Base -->
         <div class="space-y-3 mb-4">
           <button id="btnSalidaBase" onclick="marcarSalidaBase()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold py-3.5 rounded-xl transition flex items-center justify-between px-4">
             <span>🚀 1. Salida de Base</span>
@@ -87,11 +86,10 @@
           </button>
         </div>
 
-        <!-- Paso 2: Puntos de Trabajo -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 mb-4">
           <div class="flex justify-between items-center">
             <span id="lblPuntoActual" class="text-xs font-bold text-emerald-400 uppercase">Sin Punto Activo</span>
-            <button id="btnNuevoPunto" onclick="crearNuevoPunto()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs px-3 py-2 rounded-xl transition shadow">
+            <button id="btnNuevoPunto" onclick="solicitarNombrePunto()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs px-3 py-2 rounded-xl transition shadow">
               ➕ Nuevo Punto
             </button>
           </div>
@@ -109,7 +107,6 @@
           </div>
         </div>
 
-        <!-- Paso 3: Regreso a Base -->
         <div class="space-y-3 mb-4">
           <button id="btnRegresoBase" onclick="marcarRegresoBase()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold py-3.5 rounded-xl transition flex items-center justify-between px-4">
             <span>🏢 4. Regreso a Base</span>
@@ -121,25 +118,25 @@
       </div>
     </section>
 
-    <!-- ==================== VISTA ADMIN ==================== -->
-    <section id="vistaAdmin" class="w-full space-y-6 hidden">
+    <!-- ==================== VISTA MONITOREO & ADMIN ==================== -->
+    <section id="vistaMonitoreo" class="w-full space-y-6 hidden">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 class="text-2xl font-bold text-emerald-400">Panel de Control & Calendario Diario</h2>
+          <h2 id="tituloPanelMonitoreo" class="text-2xl font-bold text-emerald-400">Panel de Control & Monitoreo</h2>
           <p class="text-xs text-slate-400">Control de asistencia, rutas y tiempos por fecha</p>
         </div>
         <div class="flex space-x-2">
-          <button onclick="exportarCSV()" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 px-3 py-2 rounded-xl text-xs font-bold transition">
+          <button id="btnExportar" onclick="exportarCSV()" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 px-3 py-2 rounded-xl text-xs font-bold transition hidden">
             📥 Exportar CSV
           </button>
-          <button onclick="limpiarRegistros()" class="bg-rose-900/30 hover:bg-rose-900/50 text-rose-400 border border-rose-500/30 px-3 py-2 rounded-xl text-xs font-bold transition">
+          <button id="btnLimpiarHistorial" onclick="limpiarRegistros()" class="bg-rose-900/30 hover:bg-rose-900/50 text-rose-400 border border-rose-500/30 px-3 py-2 rounded-xl text-xs font-bold transition hidden">
             🗑️ Limpiar Historial
           </button>
         </div>
       </div>
 
       <!-- SECCIÓN 1: CALENDARIO DE CONTROL DIARIO -->
-      <div class="card-dark border rounded-2xl p-5 shadow-xl space-y-4">
+      <div id="seccionCalendario" class="card-dark border rounded-2xl p-5 shadow-xl space-y-4 hidden">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 pb-3 border-b border-slate-800">
           <div>
             <h3 class="text-sm font-bold text-emerald-400">📅 Calendario de Control Diario</h3>
@@ -153,12 +150,11 @@
           </div>
         </div>
 
-        <!-- Resumen del Día Seleccionado -->
         <div id="resumenDiaContainer" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
       </div>
 
       <!-- SECCIÓN 2: LISTADO DETALLADO DE EVENTOS DEL DÍA -->
-      <div class="card-dark border rounded-2xl overflow-hidden shadow-2xl p-4 space-y-3">
+      <div id="seccionListado" class="card-dark border rounded-2xl overflow-hidden shadow-2xl p-4 space-y-3 hidden">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-800 pb-2">
           <h3 class="text-sm font-bold text-slate-200">
             📋 Puntos y Tiempos del Día: <span id="lblFechaSeleccionada" class="text-emerald-400">--/--/----</span>
@@ -173,47 +169,28 @@
         <div id="listaEventosCalendario" class="space-y-3"></div>
       </div>
 
-      <!-- SECCIÓN 3: GESTIÓN DE USUARIOS -->
-      <div class="card-dark border rounded-2xl p-5 shadow-2xl space-y-4">
-        <h3 class="text-base font-bold text-emerald-400 border-b border-slate-800 pb-2">👥 Crear Nuevo Usuario</h3>
-        
-        <form onsubmit="crearNuevoUsuario(event)" class="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Usuario ID:</label>
-            <input type="text" id="nuUsuario" placeholder="ej: cuadrilla4" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none">
-          </div>
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nombre Descriptivo:</label>
-            <input type="text" id="nuNombre" placeholder="ej: Cuadrilla 4" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none">
-          </div>
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">PIN / Contraseña:</label>
-            <input type="password" id="nuPass" placeholder="••••" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none">
-          </div>
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Rol:</label>
-            <select id="nuRol" class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none">
-              <option value="tecnico">Técnico (Marcación)</option>
-              <option value="admin">Administrador (Control)</option>
-            </select>
-          </div>
-          <div class="md:col-span-4 flex justify-end">
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition shadow">
-              ➕ Registrar Usuario
-            </button>
-          </div>
-        </form>
+      <!-- SECCIÓN 3: GESTIÓN DE USUARIOS CON TABLA Y CREDENCIALES -->
+      <div id="seccionGestionUsuarios" class="card-dark border rounded-2xl p-5 shadow-2xl space-y-4 hidden">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+          <h3 class="text-base font-bold text-emerald-400">👥 Gestión de Personal y Credenciales</h3>
+          <button onclick="abrirModalCrear()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs px-4 py-2.5 rounded-xl transition shadow">
+            ➕ Registrar Nuevo Personal
+          </button>
+        </div>
 
-        <div class="pt-4 border-t border-slate-800">
-          <h4 class="text-xs font-bold text-slate-300 mb-3">Lista de Usuarios Registrados:</h4>
+        <div class="pt-2">
+          <h4 class="text-xs font-bold text-slate-300 mb-3">Lista de Personal Registrado (Credenciales y Datos):</h4>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead class="bg-slate-900 text-slate-400 uppercase text-[10px]">
                 <tr>
-                  <th class="p-2">Usuario ID</th>
-                  <th class="p-2">Nombre</th>
-                  <th class="p-2">Rol</th>
-                  <th class="p-2">Acción</th>
+                  <th class="p-2">Usuario (ID)</th>
+                  <th class="p-2">PIN</th>
+                  <th class="p-2">Apellidos y Nombres</th>
+                  <th class="p-2">DNI</th>
+                  <th class="p-2">Teléfono</th>
+                  <th class="p-2">Cargo / Cuadrilla</th>
+                  <th class="p-2">Acciones</th>
                 </tr>
               </thead>
               <tbody id="tablaUsuariosBody" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
@@ -225,17 +202,119 @@
 
   </main>
 
+  <!-- ==================== MODAL FLOTANTE (CREAR / EDITAR) ==================== -->
+  <div id="modalPersonal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="card-dark border max-w-lg w-full p-6 rounded-2xl shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 id="modalTitulo" class="text-base font-extrabold text-emerald-400">📝 Registrar Nuevo Personal</h3>
+        <button onclick="cerrarModalPersonal()" class="text-slate-400 hover:text-rose-400 font-bold text-sm">✕ Cerrar</button>
+      </div>
+
+      <form onsubmit="guardarPersonal(event)" class="space-y-3">
+        <input type="hidden" id="editandoId" value="">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Nombres:</label>
+            <input type="text" id="nuNombres" placeholder="Ej: Jhon Alejandro" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Apellido Paterno:</label>
+            <input type="text" id="nuApePaterno" placeholder="Ej: Chayacaña" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Apellido Materno:</label>
+            <input type="text" id="nuApeMaterno" placeholder="Ej: Angeles" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">DNI (Exacto 8 dígitos):</label>
+            <input type="text" id="nuDni" placeholder="Ej: 72345678" maxlength="8" oninput="validarSoloNumeros(this, 8)" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none tracking-widest font-mono">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Teléfono (Exacto 9 dígitos):</label>
+            <input type="text" id="nuTelefono" placeholder="Ej: 944740061" maxlength="9" oninput="validarSoloNumeros(this, 9)" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none tracking-wider font-mono">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Cargo / Rol:</label>
+            <select id="nuCargo" onchange="controlarSelectorCuadrilla()" class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none">
+              <option value="tecnico">Técnico (Campo)</option>
+              <option value="supervisor">Supervisor</option>
+              <option value="coordinador">Coordinador</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- SELECTOR DE CUADRILLA -->
+        <div id="contenedorCuadrillaAsignada" class="space-y-1">
+          <label class="block text-[11px] font-semibold text-emerald-400 mb-1">Asignar Cuadrilla:</label>
+          <select id="nuCuadrillaAsignada" class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none font-bold">
+            <option value="Cuadrilla 1">Cuadrilla 1</option>
+            <option value="Cuadrilla 2">Cuadrilla 2</option>
+            <option value="Cuadrilla 3">Cuadrilla 3</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Usuario ID (Login):</label>
+            <input type="text" id="nuUsuario" placeholder="ej: cuadrilla1" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none font-mono">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">PIN / Contraseña:</label>
+            <input type="text" id="nuPass" placeholder="••••" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none font-mono">
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-3">
+          <button type="button" onclick="cerrarModalPersonal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2.5 rounded-xl transition">
+            Cancelar
+          </button>
+          <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs px-5 py-2.5 rounded-xl transition shadow">
+            Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <footer class="text-center text-slate-600 text-xs py-4 border-t border-slate-800/50">
-    Sistema de Control PEXT &bull; Cambio de Día Automático (00:00 hrs)
+    Bantel PEXT Control &bull; Asignación de Cuadrillas &bull; Cambio 00:00 hrs
   </footer>
 
   <!-- SCRIPT -->
   <script>
     const USUARIOS_BASE = {
-      "cuadrilla1": { pass: "1111", rol: "tecnico", nombre: "Cuadrilla 1" },
-      "cuadrilla2": { pass: "2222", rol: "tecnico", nombre: "Cuadrilla 2" },
-      "cuadrilla3": { pass: "3333", rol: "tecnico", nombre: "Cuadrilla 3" },
-      "admin":      { pass: "1234", rol: "admin",   nombre: "Administrador" }
+      "admin": { 
+        pass: "1234", 
+        nombres: "Jhon Alejandro", 
+        apePaterno: "Chayacaña", 
+        apeMaterno: "Angeles", 
+        dni: "70000000",
+        telefono: "944740061",
+        cargo: "admin",
+        cuadrillaAsignada: "",
+        esTecnico: false,
+        permisos: { verCalendario: true, exportar: true, limpiar: true, gestion: true } 
+      },
+      "cuadrilla1": { 
+        pass: "1111", 
+        nombres: "Equipo", 
+        apePaterno: "Técnico", 
+        apeMaterno: "Uno", 
+        dni: "71111111",
+        telefono: "911111111",
+        cargo: "tecnico",
+        cuadrillaAsignada: "Cuadrilla 1",
+        esTecnico: true,
+        permisos: { verCalendario: false, exportar: false, limpiar: false, gestion: false } 
+      }
     };
 
     let usuarioSesion = null;
@@ -244,6 +323,7 @@
       salioDeBase: false, 
       jornadaNum: 1, 
       puntoActivoNum: 0, 
+      nombrePuntoActivo: "",
       llegadaPuntoMarcada: false, 
       finTrabajoMarcado: false, 
       totalPuntosCompletados: 0,
@@ -256,6 +336,23 @@
 
     function guardarUsuarios(users) {
       localStorage.setItem('usuarios_sistema', JSON.stringify(users));
+    }
+
+    function validarSoloNumeros(input, maxLen) {
+      input.value = input.value.replace(/\D/g, '');
+      if (input.value.length > maxLen) {
+        input.value = input.value.slice(0, maxLen);
+      }
+    }
+
+    function controlarSelectorCuadrilla() {
+      const cargo = document.getElementById('nuCargo').value;
+      const contenedor = document.getElementById('contenedorCuadrillaAsignada');
+      if (cargo === 'tecnico') {
+        contenedor.classList.remove('hidden');
+      } else {
+        contenedor.classList.add('hidden');
+      }
     }
 
     async function sincronizarHora() {
@@ -280,6 +377,13 @@
       return { ahora, fechaIso, horaStr };
     }
 
+    function obtenerNombreCorto(uObj) {
+      if (!uObj || !uObj.nombres) return "Usuario";
+      const primerNombre = uObj.nombres.trim().split(/\s+/)[0];
+      const primerApellido = uObj.apePaterno ? uObj.apePaterno.trim().split(/\s+/)[0] : "";
+      return `${primerNombre} ${primerApellido}`.trim();
+    }
+
     function ejecutarLogin(e) {
       e.preventDefault();
       const u = document.getElementById('inputUsuario').value.trim().toLowerCase();
@@ -288,6 +392,7 @@
 
       if (users[u] && users[u].pass === p) {
         usuarioSesion = users[u];
+        usuarioSesion.id = u;
         document.getElementById('loginError').classList.add('hidden');
         document.getElementById('inputPassword').value = '';
         iniciarApp();
@@ -299,15 +404,42 @@
     function iniciarApp() {
       document.getElementById('vistaLogin').classList.add('hidden');
       document.getElementById('appHeader').classList.remove('hidden');
-      document.getElementById('userInfo').innerText = `${usuarioSesion.nombre} (${usuarioSesion.rol})`;
 
-      if (usuarioSesion.rol === 'admin') {
-        document.getElementById('vistaAdmin').classList.remove('hidden');
+      const nombreCorto = obtenerNombreCorto(usuarioSesion);
+      const cargoTexto = usuarioSesion.cargo ? usuarioSesion.cargo.toUpperCase() : (usuarioSesion.esTecnico ? 'TÉCNICO' : 'ADMIN');
+      document.getElementById('userInfo').innerText = `👋 Hola, ${nombreCorto} (${cargoTexto})`;
+
+      if (usuarioSesion.esTecnico) {
+        document.getElementById('vistaTecnico').classList.remove('hidden');
+        const nombreCuadrilla = usuarioSesion.cuadrillaAsignada || `${usuarioSesion.nombres} ${usuarioSesion.apePaterno}`;
+        document.getElementById('lblCuadrillaActiva').innerText = nombreCuadrilla;
+        cargarEstadoLocal();
+      } else {
+        document.getElementById('vistaMonitoreo').classList.remove('hidden');
+        aplicarPermisosEnInterfaz();
+      }
+    }
+
+    function aplicarPermisosEnInterfaz() {
+      const p = usuarioSesion.permisos;
+
+      document.getElementById('btnExportar').style.display = p.exportar ? "block" : "none";
+      document.getElementById('btnLimpiarHistorial').style.display = p.limpiar ? "block" : "none";
+
+      if (p.verCalendario) {
+        document.getElementById('seccionCalendario').classList.remove('hidden');
+        document.getElementById('seccionListado').classList.remove('hidden');
         inicializarAdminView();
       } else {
-        document.getElementById('vistaTecnico').classList.remove('hidden');
-        document.getElementById('lblCuadrillaActiva').innerText = usuarioSesion.nombre;
-        cargarEstadoLocal();
+        document.getElementById('seccionCalendario').classList.add('hidden');
+        document.getElementById('seccionListado').classList.add('hidden');
+      }
+
+      if (p.gestion) {
+        document.getElementById('seccionGestionUsuarios').classList.remove('hidden');
+        renderizarTablaUsuarios();
+      } else {
+        document.getElementById('seccionGestionUsuarios').classList.add('hidden');
       }
     }
 
@@ -315,14 +447,54 @@
       usuarioSesion = null;
       document.getElementById('appHeader').classList.add('hidden');
       document.getElementById('vistaTecnico').classList.add('hidden');
-      document.getElementById('vistaAdmin').classList.add('hidden');
+      document.getElementById('vistaMonitoreo').classList.add('hidden');
       document.getElementById('vistaLogin').classList.remove('hidden');
     }
 
-    /* MÓDULO TÉCNICO CON CAMBIO AUTOMÁTICO A MEDIANOCHE */
+    /* MODAL CONTROLS */
+    function abrirModalCrear() {
+      document.getElementById('modalTitulo').innerText = "📝 Registrar Nuevo Personal";
+      document.getElementById('editandoId').value = "";
+      document.getElementById('nuUsuario').disabled = false;
+      document.querySelector('#modalPersonal form').reset();
+      controlarSelectorCuadrilla();
+      document.getElementById('modalPersonal').classList.remove('hidden');
+    }
+
+    function abrirModalEditar(id) {
+      const users = obtenerUsuarios();
+      const u = users[id];
+      if (!u) return;
+
+      document.getElementById('modalTitulo').innerText = `✏️ Editar Personal: ${id}`;
+      document.getElementById('editandoId').value = id;
+      document.getElementById('nuUsuario').value = id;
+      document.getElementById('nuUsuario').disabled = true;
+      document.getElementById('nuPass').value = u.pass || "";
+      document.getElementById('nuNombres').value = u.nombres || "";
+      document.getElementById('nuApePaterno').value = u.apePaterno || "";
+      document.getElementById('nuApeMaterno').value = u.apeMaterno || "";
+      document.getElementById('nuDni').value = u.dni || "";
+      document.getElementById('nuTelefono').value = u.telefono || "";
+      document.getElementById('nuCargo').value = u.cargo || (u.esTecnico ? 'tecnico' : 'admin');
+      
+      controlarSelectorCuadrilla();
+      if (u.cuadrillaAsignada) {
+        document.getElementById('nuCuadrillaAsignada').value = u.cuadrillaAsignada;
+      }
+
+      document.getElementById('modalPersonal').classList.remove('hidden');
+    }
+
+    function cerrarModalPersonal() {
+      document.getElementById('modalPersonal').classList.add('hidden');
+    }
+
+    /* MÓDULO TÉCNICO */
     function cargarEstadoLocal() {
       const { fechaIso } = obtenerFechaHoraLocal();
-      const guardado = JSON.parse(localStorage.getItem(`ciclo_${usuarioSesion.nombre}`));
+      const claveCiclo = usuarioSesion.cuadrillaAsignada || `${usuarioSesion.nombres} ${usuarioSesion.apePaterno}`;
+      const guardado = JSON.parse(localStorage.getItem(`ciclo_${claveCiclo}`));
       
       if (guardado) {
         estadoCiclo = guardado;
@@ -333,6 +505,7 @@
             salioDeBase: false, 
             jornadaNum: 1, 
             puntoActivoNum: 0, 
+            nombrePuntoActivo: "",
             llegadaPuntoMarcada: false, 
             finTrabajoMarcado: false, 
             totalPuntosCompletados: 0,
@@ -344,6 +517,7 @@
           salioDeBase: false, 
           jornadaNum: 1, 
           puntoActivoNum: 0, 
+          nombrePuntoActivo: "",
           llegadaPuntoMarcada: false, 
           finTrabajoMarcado: false, 
           totalPuntosCompletados: 0,
@@ -356,8 +530,9 @@
 
     function guardarEstadoLocal() {
       const { fechaIso } = obtenerFechaHoraLocal();
+      const claveCiclo = usuarioSesion.cuadrillaAsignada || `${usuarioSesion.nombres} ${usuarioSesion.apePaterno}`;
       estadoCiclo.fechaUltimoUso = fechaIso;
-      localStorage.setItem(`ciclo_${usuarioSesion.nombre}`, JSON.stringify(estadoCiclo));
+      localStorage.setItem(`ciclo_${claveCiclo}`, JSON.stringify(estadoCiclo));
     }
 
     function actualizarBotonesSecuencia() {
@@ -386,7 +561,7 @@
       }
 
       if (estadoCiclo.puntoActivoNum > 0) {
-        lblPunto.innerText = `Salida #${estadoCiclo.jornadaNum} - Punto #${estadoCiclo.puntoActivoNum} ${estadoCiclo.finTrabajoMarcado ? '(Finalizado)' : 'en Proceso'}`;
+        lblPunto.innerText = `[${estadoCiclo.nombrePuntoActivo}] S#${estadoCiclo.jornadaNum} - P#${estadoCiclo.puntoActivoNum} ${estadoCiclo.finTrabajoMarcado ? '(Finalizado)' : 'en Proceso'}`;
         btnLlegada.disabled = estadoCiclo.llegadaPuntoMarcada;
         if (estadoCiclo.llegadaPuntoMarcada) btnLlegada.classList.add('btn-disabled');
         else btnLlegada.classList.remove('btn-disabled');
@@ -419,14 +594,19 @@
       obtenerGPSSeguro((lat, lng) => guardarRegistroServidor("Salida de Base", `Base (Salida #${estadoCiclo.jornadaNum})`, lat, lng));
     }
 
-    function crearNuevoPunto() {
+    function solicitarNombrePunto() {
       if (!estadoCiclo.salioDeBase || (estadoCiclo.puntoActivoNum > 0 && !estadoCiclo.finTrabajoMarcado)) return;
+      
+      const nombreActividad = prompt("Ingresa el nombre o detalle de lo que se realizará en este punto:\n(Ej: Instalación de acometida / Mantenimiento NAP)");
+      if (!nombreActividad || nombreActividad.trim() === "") return;
+
       estadoCiclo.puntoActivoNum += 1;
+      estadoCiclo.nombrePuntoActivo = nombreActividad.trim();
       estadoCiclo.llegadaPuntoMarcada = false;
       estadoCiclo.finTrabajoMarcado = false;
       guardarEstadoLocal();
       actualizarBotonesSecuencia();
-      mostrarNotificacion(`Iniciado Salida #${estadoCiclo.jornadaNum} - Punto #${estadoCiclo.puntoActivoNum}.`);
+      mostrarNotificacion(`Iniciado: ${estadoCiclo.nombrePuntoActivo}.`);
     }
 
     function marcarLlegadaPunto() {
@@ -434,7 +614,7 @@
       estadoCiclo.llegadaPuntoMarcada = true;
       guardarEstadoLocal();
       actualizarBotonesSecuencia();
-      const lugar = `S#${estadoCiclo.jornadaNum} - Punto #${estadoCiclo.puntoActivoNum}`;
+      const lugar = `${estadoCiclo.nombrePuntoActivo} (S#${estadoCiclo.jornadaNum} - P#${estadoCiclo.puntoActivoNum})`;
       obtenerGPSSeguro((lat, lng) => guardarRegistroServidor("Llegada a Punto", lugar, lat, lng));
     }
 
@@ -444,7 +624,7 @@
       estadoCiclo.totalPuntosCompletados += 1;
       guardarEstadoLocal();
       actualizarBotonesSecuencia();
-      const lugar = `S#${estadoCiclo.jornadaNum} - Punto #${estadoCiclo.puntoActivoNum}`;
+      const lugar = `${estadoCiclo.nombrePuntoActivo} (S#${estadoCiclo.jornadaNum} - P#${estadoCiclo.puntoActivoNum})`;
       obtenerGPSSeguro((lat, lng) => guardarRegistroServidor("Fin de Trabajo", lugar, lat, lng));
     }
 
@@ -456,6 +636,7 @@
         salioDeBase: false, 
         jornadaNum: jornadaActual + 1, 
         puntoActivoNum: 0, 
+        nombrePuntoActivo: "",
         llegadaPuntoMarcada: false, 
         finTrabajoMarcado: false, 
         totalPuntosCompletados: 0,
@@ -477,10 +658,11 @@
 
     function guardarRegistroServidor(hito, lugar, lat, lng) {
       const { fechaIso, horaStr } = obtenerFechaHoraLocal();
+      const nombreCuadrilla = usuarioSesion.cuadrillaAsignada || `${usuarioSesion.nombres} ${usuarioSesion.apePaterno}`;
       
       const nuevo = {
         id: Date.now(),
-        cuadrilla: usuarioSesion.nombre,
+        cuadrilla: nombreCuadrilla,
         lugar: lugar,
         hito: hito,
         hora: horaStr,
@@ -501,7 +683,7 @@
       regs.unshift(nuevo);
       localStorage.setItem('registros_cuadrillas', JSON.stringify(regs));
       
-      mostrarNotificacion(`✅ Registrado: ${hito} (${lugar}) a las ${horaStr}`);
+      mostrarNotificacion(`✅ Registrado: ${hito} - ${lugar} a las ${horaStr}`);
     }
 
     function mostrarNotificacion(txt) {
@@ -510,13 +692,12 @@
       alertBox.innerText = txt;
     }
 
-    /* MÓDULO ADMINISTRADOR & CALENDARIO DIARIO */
+    /* CALENDARIO */
     function inicializarAdminView() {
       const { fechaIso } = obtenerFechaHoraLocal();
       document.getElementById('calendarioDiario').value = fechaIso;
       poblarSelectorCuadrillasCalendario();
       actualizarVistaCalendario();
-      renderizarTablaUsuarios();
     }
 
     function seleccionarHoy() {
@@ -526,35 +707,32 @@
     }
 
     function poblarSelectorCuadrillasCalendario() {
-      const users = obtenerUsuarios();
       const selector = document.getElementById('filtroCuadrillaCalendario');
-      selector.innerHTML = `<option value="todas">Todas las Cuadrillas</option>`;
-      Object.keys(users).forEach(id => {
-        if (users[id].rol === 'tecnico') {
-          selector.innerHTML += `<option value="${users[id].nombre}">${users[id].nombre}</option>`;
-        }
-      });
+      selector.innerHTML = `
+        <option value="todas">Todas las Cuadrillas</option>
+        <option value="Cuadrilla 1">Cuadrilla 1</option>
+        <option value="Cuadrilla 2">Cuadrilla 2</option>
+        <option value="Cuadrilla 3">Cuadrilla 3</option>
+      `;
     }
 
     function actualizarVistaCalendario() {
       const fechaVal = document.getElementById('calendarioDiario').value;
       if (!fechaVal) return;
-
       document.getElementById('lblFechaSeleccionada').innerText = fechaVal;
-
       renderizarResumenDia(fechaVal);
       renderizarListadoEventosDia();
     }
 
     function renderizarResumenDia(fechaIso) {
-      const users = obtenerUsuarios();
       const cont = document.getElementById('resumenDiaContainer');
       const regs = JSON.parse(localStorage.getItem('registros_cuadrillas') || '[]');
       const regsDia = regs.filter(r => r.fecha === fechaIso);
 
+      const cuadrillasFijas = ["Cuadrilla 1", "Cuadrilla 2", "Cuadrilla 3"];
       cont.innerHTML = '';
-      Object.keys(users).filter(id => users[id].rol === 'tecnico').forEach(id => {
-        const cNombre = users[id].nombre;
+
+      cuadrillasFijas.forEach(cNombre => {
         const regCuad = regsDia.filter(r => r.cuadrilla === cNombre);
         const salidas = regCuad.filter(r => r.hito === 'Salida de Base').length;
         const puntos = regCuad.filter(r => r.hito === 'Fin de Trabajo').length;
@@ -582,11 +760,8 @@
       if (!fechaIso) return;
 
       let regs = JSON.parse(localStorage.getItem('registros_cuadrillas') || '[]').filter(r => r.fecha === fechaIso);
-
       const fCuadrilla = document.getElementById('filtroCuadrillaCalendario').value;
-      if (fCuadrilla !== 'todas') {
-        regs = regs.filter(r => r.cuadrilla === fCuadrilla);
-      }
+      if (fCuadrilla !== 'todas') regs = regs.filter(r => r.cuadrilla === fCuadrilla);
 
       const grupos = {};
       regs.forEach(r => {
@@ -656,30 +831,48 @@
     }
 
     /* GESTIÓN DE USUARIOS */
-    function crearNuevoUsuario(e) {
+    function guardarPersonal(e) {
       e.preventDefault();
+      if (!usuarioSesion.permisos.gestion) return alert("No tienes permisos.");
+
+      const editId = document.getElementById('editandoId').value.trim();
       const id = document.getElementById('nuUsuario').value.trim().toLowerCase();
-      const nombre = document.getElementById('nuNombre').value.trim();
+      const nombres = document.getElementById('nuNombres').value.trim();
+      const apePaterno = document.getElementById('nuApePaterno').value.trim();
+      const apeMaterno = document.getElementById('nuApeMaterno').value.trim();
+      const dni = document.getElementById('nuDni').value.trim();
+      const telefono = document.getElementById('nuTelefono').value.trim();
       const pass = document.getElementById('nuPass').value.trim();
-      const rol = document.getElementById('nuRol').value;
+      const cargo = document.getElementById('nuCargo').value;
+      const cuadrillaAsignada = (cargo === 'tecnico') ? document.getElementById('nuCuadrillaAsignada').value : "";
+
+      if (dni.length !== 8) return alert("El DNI debe tener exactamente 8 dígitos.");
+      if (telefono.length !== 9) return alert("El teléfono debe tener exactamente 9 dígitos.");
+
+      const esTecnico = (cargo === 'tecnico');
+      let permisos = { verCalendario: true, exportar: true, limpiar: false, gestion: false };
+      if (cargo === 'tecnico') {
+        permisos = { verCalendario: false, exportar: false, limpiar: false, gestion: false };
+      } else if (cargo === 'admin') {
+        permisos = { verCalendario: true, exportar: true, limpiar: true, gestion: true };
+      }
 
       const users = obtenerUsuarios();
-      if (users[id]) return alert("El ID ya existe.");
+      if (!editId && users[id]) return alert("El ID de usuario ya existe.");
 
-      users[id] = { pass, rol, nombre };
+      const targetId = editId || id;
+      users[targetId] = { pass, nombres, apePaterno, apeMaterno, dni, telefono, cargo, cuadrillaAsignada, esTecnico, permisos };
       guardarUsuarios(users);
       
-      document.getElementById('nuUsuario').value = '';
-      document.getElementById('nuNombre').value = '';
-      document.getElementById('nuPass').value = '';
-      
+      cerrarModalPersonal();
       poblarSelectorCuadrillasCalendario();
       renderizarTablaUsuarios();
-      alert(`¡Usuario '${nombre}' creado!`);
+      alert(editId ? `¡Personal actualizado con éxito!` : `¡Personal registrado con éxito!`);
     }
 
     function eliminarUsuario(id) {
-      if (id === 'admin') return alert("No se puede eliminar el admin.");
+      if (!usuarioSesion.permisos.gestion) return alert("Acción no permitida.");
+      if (id === 'admin') return alert("No se puede eliminar al admin principal.");
       if (confirm(`¿Eliminar al usuario '${id}'?`)) {
         const users = obtenerUsuarios();
         delete users[id];
@@ -693,21 +886,32 @@
       const tbody = document.getElementById('tablaUsuariosBody');
       const users = obtenerUsuarios();
 
-      tbody.innerHTML = Object.keys(users).map(id => `
-        <tr class="hover:bg-slate-800/40 transition">
-          <td class="p-2 font-mono font-bold text-emerald-400">${id}</td>
-          <td class="p-2 text-slate-200">${users[id].nombre}</td>
-          <td class="p-2"><span class="bg-slate-800 border border-slate-700 px-2 py-0.5 rounded text-[10px] text-slate-300 uppercase">${users[id].rol}</span></td>
-          <td class="p-2">
-            ${id !== 'admin' 
-              ? `<button onclick="eliminarUsuario('${id}')" class="text-rose-400 hover:text-rose-300 font-bold text-[11px]">🗑️ Eliminar</button>` 
-              : `<span class="text-slate-600 text-[10px]">Protegido</span>`}
-          </td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = Object.keys(users).map(id => {
+        const u = users[id];
+        const apellidosNombres = `${u.apePaterno || ''} ${u.apeMaterno || ''}, ${u.nombres || ''}`;
+        const cargoInfo = u.cargo === 'tecnico' ? `TÉCNICO (${u.cuadrillaAsignada || 'Sin Asignar'})` : (u.cargo ? u.cargo.toUpperCase() : 'ADMIN');
+        
+        return `
+          <tr class="hover:bg-slate-800/40 transition">
+            <td class="p-2 font-mono font-bold text-emerald-400">${id}</td>
+            <td class="p-2 font-mono text-amber-300">${u.pass || '••••'}</td>
+            <td class="p-2 text-slate-200">${apellidosNombres}</td>
+            <td class="p-2 font-mono">${u.dni || 'N/A'}</td>
+            <td class="p-2 font-mono">${u.telefono || 'N/A'}</td>
+            <td class="p-2"><span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">${cargoInfo}</span></td>
+            <td class="p-2 space-x-2">
+              <button onclick="abrirModalEditar('${id}')" class="text-amber-400 hover:text-amber-300 font-bold text-[11px]">✏️ Editar</button>
+              ${(id !== 'admin' && usuarioSesion.permisos.gestion) 
+                ? `<button onclick="eliminarUsuario('${id}')" class="text-rose-400 hover:text-rose-300 font-bold text-[11px]">🗑️ Eliminar</button>` 
+                : `<span class="text-slate-600 text-[10px]">Protegido</span>`}
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function exportarCSV() {
+      if (!usuarioSesion.permisos.exportar) return alert("No tienes permiso.");
       const regs = JSON.parse(localStorage.getItem('registros_cuadrillas') || '[]');
       if (regs.length === 0) return alert("Sin datos.");
       let csv = "ID,Hora,Fecha,Cuadrilla,Lugar,Hito,Lat,Lng\n";
@@ -720,7 +924,8 @@
     }
 
     function limpiarRegistros() {
-      if (confirm("¿Borrar todo el historial de marcaciones?")) {
+      if (!usuarioSesion.permisos.limpiar) return alert("No tienes permisos.");
+      if (confirm("¿Borrar todo el historial?")) {
         localStorage.removeItem('registros_cuadrillas');
         actualizarVistaCalendario();
       }
