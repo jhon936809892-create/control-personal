@@ -67,11 +67,7 @@
           Usuario o PIN incorrecto.
         </div>
 
-        <div class="mt-5 pt-3 border-t border-slate-800 text-[11px] text-slate-500 space-y-0.5">
-          <p class="font-bold text-slate-400 mb-1">Accesos predeterminados:</p>
-          <p>• Admin: <strong>admin</strong> (1234)</p>
-          <p>• Técnico 1: <strong>cuadrilla1</strong> (1111)</p>
-        </div>
+      
       </div>
     </section>
 
@@ -601,7 +597,7 @@
     function solicitarNombrePunto() {
       if (!estadoCiclo.salioDeBase || (estadoCiclo.puntoActivoNum > 0 && !estadoCiclo.finTrabajoMarcado)) return;
       
-      const nombreActividad = prompt("Ingresa el nombre o detalle de lo que se realizará en este punto:\n(Ej: Instalación de acometida / Mantenimiento NAP)");
+      const nombreActividad = prompt("Ingresa el nombre o detalle de lo que se realizará en este punto:\n(Ej: EMERGENCIA, MANTENIMIENTO, INSPECCIÓN, OTRO)", "");
       if (!nombreActividad || nombreActividad.trim() === "") return;
 
       estadoCiclo.puntoActivoNum += 1;
