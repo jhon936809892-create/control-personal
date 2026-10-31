@@ -9,7 +9,6 @@
     .bg-dark { background-color: #0F172A; }
     .card-dark { background-color: #1E293B; border-color: #334155; }
     .btn-disabled { opacity: 0.35; cursor: not-allowed !important; pointer-events: none; }
-    /* Prevenir zoom automático en inputs en iOS al hacer focus */
     @media (max-width: 768px) {
       input, select, textarea { font-size: 16px !important; }
     }
@@ -17,7 +16,7 @@
 </head>
 <body class="bg-dark text-slate-100 min-h-screen font-sans flex flex-col justify-between antialiased selection:bg-emerald-500 selection:text-slate-950">
 
-  <!-- BARRA DE NAVEGACIÓN ADAPTABLE -->
+  <!-- BARRA DE NAVEGACIÓN CON SALUDO -->
   <header id="appHeader" class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-3 py-3 sticky top-0 z-50 shadow-md hidden">
     <div class="max-w-5xl mx-auto flex flex-wrap justify-between items-center gap-2">
       <div class="flex items-center space-x-2">
@@ -25,7 +24,7 @@
         <span class="font-extrabold text-emerald-400 text-sm sm:text-base tracking-wide">PEXT CONTROL</span>
       </div>
       <div class="flex items-center space-x-2">
-        <span id="userInfo" class="text-[11px] sm:text-xs font-bold bg-slate-800 text-emerald-400 px-2.5 py-1.5 rounded-xl border border-slate-700 truncate max-w-[160px] sm:max-w-xs"></span>
+        <span id="userInfo" class="text-[11px] sm:text-xs font-bold bg-slate-800 text-emerald-400 px-2.5 py-1.5 rounded-xl border border-slate-700 truncate max-w-[200px] sm:max-w-xs"></span>
         <button onclick="cerrarSesion()" class="px-2.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition bg-rose-900/40 text-rose-300 border border-rose-800 hover:bg-rose-900/70 whitespace-nowrap">
           🚪 Salir
         </button>
@@ -50,12 +49,12 @@
         <form onsubmit="ejecutarLogin(event)" class="space-y-3.5">
           <div>
             <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">Usuario:</label>
-            <input type="text" id="inputUsuario" placeholder="Ej: admin o cuadrilla1" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm">
+            <input type="text" id="inputUsuario" placeholder="USER" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm">
           </div>
 
           <div>
             <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">PIN / Contraseña:</label>
-            <input type="password" id="inputPassword" placeholder="••••" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm">
+            <input type="password" id="inputPassword" placeholder="PASSWORD" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm">
           </div>
 
           <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold py-3.5 rounded-xl shadow-lg transition text-xs sm:text-sm mt-2">
@@ -67,11 +66,11 @@
           Usuario o PIN incorrecto.
         </div>
 
-      
+       
       </div>
     </section>
 
-    <!-- ==================== VISTA TÉCNICO ==================== -->
+    <!-- ==================== VISTA TÉCNICO (JEFE DE CUADRILLA) ==================== -->
     <section id="vistaTecnico" class="w-full space-y-4 hidden max-w-md mx-auto my-auto">
       <div class="card-dark border p-4 sm:p-5 rounded-2xl shadow-xl">
         <div class="text-center mb-4">
@@ -243,7 +242,7 @@
           <div>
             <label class="block text-[11px] font-semibold text-slate-400 mb-1">Cargo / Rol:</label>
             <select id="nuCargo" onchange="controlarSelectorCuadrilla()" class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none">
-              <option value="tecnico">Técnico (Campo)</option>
+              <option value="jefe_cuadrilla">Jefe de Cuadrilla</option>
               <option value="supervisor">Supervisor</option>
               <option value="coordinador">Coordinador</option>
               <option value="admin">Administrador</option>
@@ -264,11 +263,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800">
           <div>
             <label class="block text-[11px] font-semibold text-slate-400 mb-1">Usuario ID (Login):</label>
-            <input type="text" id="nuUsuario" placeholder="ej: cuadrilla1" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none font-mono">
+            <input type="text" id="nuUsuario" placeholder="USER" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none font-mono">
           </div>
           <div>
             <label class="block text-[11px] font-semibold text-slate-400 mb-1">PIN / Contraseña:</label>
-            <input type="text" id="nuPass" placeholder="••••" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none font-mono">
+            <input type="text" id="nuPass" placeholder="PASSWORD" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none font-mono">
           </div>
         </div>
 
@@ -305,12 +304,12 @@
       },
       "cuadrilla1": { 
         pass: "1111", 
-        nombres: "Equipo", 
-        apePaterno: "Técnico", 
-        apeMaterno: "Uno", 
+        nombres: "Carlos", 
+        apePaterno: "Pérez", 
+        apeMaterno: "Gómez", 
         dni: "71111111",
         telefono: "911111111",
-        cargo: "tecnico",
+        cargo: "jefe_cuadrilla",
         cuadrillaAsignada: "Cuadrilla 1",
         esTecnico: true,
         permisos: { verCalendario: false, exportar: false, limpiar: false, gestion: false } 
@@ -348,7 +347,7 @@
     function controlarSelectorCuadrilla() {
       const cargo = document.getElementById('nuCargo').value;
       const contenedor = document.getElementById('contenedorCuadrillaAsignada');
-      if (cargo === 'tecnico') {
+      if (cargo === 'jefe_cuadrilla') {
         contenedor.classList.remove('hidden');
       } else {
         contenedor.classList.add('hidden');
@@ -377,11 +376,12 @@
       return { ahora, fechaIso, horaStr };
     }
 
-    function obtenerNombreCorto(uObj) {
-      if (!uObj || !uObj.nombres) return "Usuario";
-      const primerNombre = uObj.nombres.trim().split(/\s+/)[0];
-      const primerApellido = uObj.apePaterno ? uObj.apePaterno.trim().split(/\s+/)[0] : "";
-      return `${primerNombre} ${primerApellido}`.trim();
+    function formatearCargoTexto(cargo) {
+      if (cargo === 'jefe_cuadrilla') return 'JEFE DE CUADRILLA';
+      if (cargo === 'admin') return 'ADMINISTRADOR';
+      if (cargo === 'supervisor') return 'SUPERVISOR';
+      if (cargo === 'coordinador') return 'COORDINADOR';
+      return 'PERSONAL';
     }
 
     function ejecutarLogin(e) {
@@ -405,13 +405,13 @@
       document.getElementById('vistaLogin').classList.add('hidden');
       document.getElementById('appHeader').classList.remove('hidden');
 
-      const nombreCorto = obtenerNombreCorto(usuarioSesion);
-      const cargoTexto = usuarioSesion.cargo ? usuarioSesion.cargo.toUpperCase() : (usuarioSesion.esTecnico ? 'TÉCNICO' : 'ADMIN');
-      document.getElementById('userInfo').innerText = `${nombreCorto} (${cargoTexto})`;
+      const nombreCompleto = `${usuarioSesion.nombres} ${usuarioSesion.apePaterno}`.trim();
+      const cargoTexto = formatearCargoTexto(usuarioSesion.cargo);
+      document.getElementById('userInfo').innerText = `👋 Hola, ${nombreCompleto} (${cargoTexto})`;
 
       if (usuarioSesion.esTecnico) {
         document.getElementById('vistaTecnico').classList.remove('hidden');
-        const nombreCuadrilla = usuarioSesion.cuadrillaAsignada || `${usuarioSesion.nombres} ${usuarioSesion.apePaterno}`;
+        const nombreCuadrilla = usuarioSesion.cuadrillaAsignada || nombreCompleto;
         document.getElementById('lblCuadrillaActiva').innerText = nombreCuadrilla;
         cargarEstadoLocal();
       } else {
@@ -476,7 +476,7 @@
       document.getElementById('nuApeMaterno').value = u.apeMaterno || "";
       document.getElementById('nuDni').value = u.dni || "";
       document.getElementById('nuTelefono').value = u.telefono || "";
-      document.getElementById('nuCargo').value = u.cargo || (u.esTecnico ? 'tecnico' : 'admin');
+      document.getElementById('nuCargo').value = u.cargo || (u.esTecnico ? 'jefe_cuadrilla' : 'admin');
       
       controlarSelectorCuadrilla();
       if (u.cuadrillaAsignada) {
@@ -597,7 +597,7 @@
     function solicitarNombrePunto() {
       if (!estadoCiclo.salioDeBase || (estadoCiclo.puntoActivoNum > 0 && !estadoCiclo.finTrabajoMarcado)) return;
       
-      const nombreActividad = prompt("Ingresa el nombre o detalle de lo que se realizará en este punto:\n(Ej: EMERGENCIA, MANTENIMIENTO, INSPECCIÓN, OTRO)", "");
+      const nombreActividad = prompt("Ingresa el nombre o detalle de lo que se realizará en este punto:\n(Ej: averia / certificacion / inspeccion / otro)");
       if (!nombreActividad || nombreActividad.trim() === "") return;
 
       estadoCiclo.puntoActivoNum += 1;
@@ -844,14 +844,14 @@
       const telefono = document.getElementById('nuTelefono').value.trim();
       const pass = document.getElementById('nuPass').value.trim();
       const cargo = document.getElementById('nuCargo').value;
-      const cuadrillaAsignada = (cargo === 'tecnico') ? document.getElementById('nuCuadrillaAsignada').value : "";
+      const cuadrillaAsignada = (cargo === 'jefe_cuadrilla') ? document.getElementById('nuCuadrillaAsignada').value : "";
 
       if (dni.length !== 8) return alert("El DNI debe tener exactamente 8 dígitos.");
       if (telefono.length !== 9) return alert("El teléfono debe tener exactamente 9 dígitos.");
 
-      const esTecnico = (cargo === 'tecnico');
+      const esTecnico = (cargo === 'jefe_cuadrilla');
       let permisos = { verCalendario: true, exportar: true, limpiar: false, gestion: false };
-      if (cargo === 'tecnico') {
+      if (cargo === 'jefe_cuadrilla') {
         permisos = { verCalendario: false, exportar: false, limpiar: false, gestion: false };
       } else if (cargo === 'admin') {
         permisos = { verCalendario: true, exportar: true, limpiar: true, gestion: true };
@@ -889,7 +889,7 @@
       tbody.innerHTML = Object.keys(users).map(id => {
         const u = users[id];
         const apellidosNombres = `${u.apePaterno || ''} ${u.apeMaterno || ''}, ${u.nombres || ''}`;
-        const cargoInfo = u.cargo === 'tecnico' ? `TÉCNICO (${u.cuadrillaAsignada || 'Sin Asignar'})` : (u.cargo ? u.cargo.toUpperCase() : 'ADMIN');
+        const cargoInfo = u.cargo === 'jefe_cuadrilla' ? `JEFE CUADRILLA (${u.cuadrillaAsignada || 'Sin Asignar'})` : formatearCargoTexto(u.cargo);
         
         return `
           <tr class="hover:bg-slate-800/40 transition">
