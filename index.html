@@ -71,7 +71,11 @@
           Usuario o PIN incorrecto.
         </div>
 
-       
+        <div class="mt-5 pt-3 border-t border-slate-800 text-[11px] text-slate-500 space-y-0.5">
+          <p class="font-bold text-slate-400 mb-1">Accesos por defecto:</p>
+          <p>• Admin: <strong>admin</strong> (1234)</p>
+          <p>• Jefe Cuadrilla 1: <strong>cuadrilla1</strong> (1111)</p>
+        </div>
       </div>
     </section>
 
@@ -245,12 +249,16 @@
             <input type="text" id="nuTelefono" placeholder="Ej: 944740061" maxlength="9" oninput="validarSoloNumeros(this, 9)" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none tracking-wider font-mono">
           </div>
           <div>
-            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Cargo / Rol:</label>
+            <div class="flex justify-between items-center mb-1">
+              <label class="block text-[11px] font-semibold text-slate-400">Cargo / Rol:</label>
+              <!-- Contenedor exclusivo para Admin -->
+              <div id="adminBotonesCargo" class="space-x-1 hidden">
+                <button type="button" onclick="agregarNuevoCargoPrompt()" class="text-[10px] text-emerald-400 hover:underline font-bold">➕ Nuevo Cargo</button>
+                <button type="button" onclick="eliminarCargoSeleccionado()" class="text-[10px] text-rose-400 hover:underline font-bold">🗑️ Eliminar</button>
+              </div>
+            </div>
             <select id="nuCargo" onchange="controlarSelectorCuadrilla()" class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none">
-              <option value="jefe_cuadrilla">Jefe de Cuadrilla</option>
-              <option value="supervisor">Supervisor</option>
-              <option value="coordinador">Coordinador</option>
-              <option value="admin">Administrador</option>
+              <!-- Se llena dinámicamente -->
             </select>
           </div>
         </div>
@@ -294,7 +302,7 @@
 
   <!-- SCRIPT DE CONFIGURACIÓN Y CONEXIÓN CLOUD -->
   <script>
-    // Configuración oficial de tu nuevo proyecto Firebase (control-personal-ca1c1)
+    // Configuración oficial de tu proyecto Firebase (control-personal-ca1c1)
     const firebaseConfig = {
       apiKey: "AIzaSyAu4eGmABFE58DDgBLtjicbeow41bcsIi4",
       authDomain: "control-personal-ca1c1.firebaseapp.com",
@@ -308,6 +316,13 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+
+    const CARGOS_BASE = {
+      "jefe_cuadrilla": { nombre: "Jefe de Cuadrilla", esTecnico: true, permisos: { verCalendario: false, exportar: false, limpiar: false, gestion: false } },
+      "supervisor": { nombre: "Supervisor", esTecnico: false, permisos: { verCalendario: true, exportar: true, limpiar: false, gestion: false } },
+      "coordinador": { nombre: "Coordinador", esTecnico: false, permisos: { verCalendario: true, exportar: true, limpiar: false, gestion: false } },
+      "admin": { nombre: "Administrador", esTecnico: false, permisos: { verCalendario: true, exportar: true, limpiar: true, gestion: true } }
+    };
 
     const USUARIOS_BASE = {
       "admin": { 
@@ -349,6 +364,22 @@
       fechaUltimoUso: "" 
     };
 
+    function obtenerCargos(callback) {
+      db.ref('cargos_sistema').once('value').then((snapshot) => {
+        const data = snapshot.val();
+        if (!data) {
+          db.ref('cargos_sistema').set(CARGOS_BASE);
+          callback(CARGOS_BASE);
+        } else {
+          callback(data);
+        }
+      });
+    }
+
+    function guardarCargosEnNube(cargos) {
+      db.ref('cargos_sistema').set(cargos);
+    }
+
     function obtenerUsuarios(callback) {
       db.ref('usuarios_sistema').once('value').then((snapshot) => {
         const data = snapshot.val();
@@ -381,14 +412,79 @@
       }
     }
 
-    function controlarSelectorCuadrilla() {
-      const cargo = document.getElementById('nuCargo').value;
-      const contenedor = document.getElementById('contenedorCuadrillaAsignada');
-      if (cargo === 'jefe_cuadrilla') {
-        contenedor.classList.remove('hidden');
-      } else {
-        contenedor.classList.add('hidden');
+    function poblarSelectorCargos(cargoSeleccionado = '') {
+      obtenerCargos((cargos) => {
+        const select = document.getElementById('nuCargo');
+        select.innerHTML = '';
+        Object.keys(cargos).forEach(key => {
+          const c = cargos[key];
+          const opt = document.createElement('option');
+          opt.value = key;
+          opt.textContent = c.nombre;
+          if (key === cargoSeleccionado) opt.selected = true;
+          select.appendChild(opt);
+        });
+        controlarSelectorCuadrilla();
+      });
+    }
+
+    function agregarNuevoCargoPrompt() {
+      if (!usuarioSesion || usuarioSesion.cargo !== 'admin') return alert("Acción restringida solo para administradores.");
+
+      const nombreCargo = prompt("Ingresa el nombre del nuevo cargo:\n(Ej: Asistente Técnico, Líder de Proyecto)");
+      if (!nombreCargo || nombreCargo.trim() === "") return;
+
+      const keyId = nombreCargo.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+      
+      const esTec = confirm("¿Este nuevo cargo operará como Jefe de Cuadrilla (realizará salidas al campo y flujo de puntos)?\n\n• OK = Sí (Actúa como Cuadrilla)\n• Cancelar = No (Actúa como Administrativo/Supervisor)");
+
+      obtenerCargos((cargos) => {
+        if (cargos[keyId]) return alert("Este cargo ya existe.");
+
+        cargos[keyId] = {
+          nombre: nombreCargo.trim(),
+          esTecnico: esTec,
+          permisos: esTec ? { verCalendario: false, exportar: false, limpiar: false, gestion: false } : { verCalendario: true, exportar: true, limpiar: false, gestion: false }
+        };
+
+        guardarCargosEnNube(cargos);
+        poblarSelectorCargos(keyId);
+        alert(`¡Cargo '${nombreCargo.trim()}' creado con éxito!`);
+      });
+    }
+
+    function eliminarCargoSeleccionado() {
+      if (!usuarioSesion || usuarioSesion.cargo !== 'admin') return alert("Acción restringida solo para administradores.");
+
+      const select = document.getElementById('nuCargo');
+      const keyId = select.value;
+
+      const cargosProtegidos = ['jefe_cuadrilla', 'supervisor', 'coordinador', 'admin'];
+      if (cargosProtegidos.includes(keyId)) {
+        return alert("No se pueden eliminar los cargos predeterminados del sistema.");
       }
+
+      if (confirm(`¿Estás seguro de eliminar el cargo '${select.options[select.selectedIndex].text}'?`)) {
+        obtenerCargos((cargos) => {
+          delete cargos[keyId];
+          guardarCargosEnNube(cargos);
+          poblarSelectorCargos('jefe_cuadrilla');
+        });
+      }
+    }
+
+    function controlarSelectorCuadrilla() {
+      const cargoKey = document.getElementById('nuCargo').value;
+      const contenedor = document.getElementById('contenedorCuadrillaAsignada');
+      
+      obtenerCargos((cargos) => {
+        const cInfo = cargos[cargoKey];
+        if (cInfo && cInfo.esTecnico) {
+          contenedor.classList.remove('hidden');
+        } else {
+          contenedor.classList.add('hidden');
+        }
+      });
     }
 
     async function sincronizarHora() {
@@ -413,12 +509,14 @@
       return { ahora, fechaIso, horaStr };
     }
 
-    function formatearCargoTexto(cargo) {
-      if (cargo === 'jefe_cuadrilla') return 'JEFE DE CUADRILLA';
-      if (cargo === 'admin') return 'ADMINISTRADOR';
-      if (cargo === 'supervisor') return 'SUPERVISOR';
-      if (cargo === 'coordinador') return 'COORDINADOR';
-      return 'PERSONAL';
+    function formatearCargoTexto(cargoKey, callback) {
+      obtenerCargos((cargos) => {
+        if (cargos[cargoKey]) {
+          callback(cargos[cargoKey].nombre.toUpperCase());
+        } else {
+          callback('PERSONAL');
+        }
+      });
     }
 
     function ejecutarLogin(e) {
@@ -444,8 +542,20 @@
       document.getElementById('appHeader').classList.remove('hidden');
 
       const nombreCompleto = `${usuarioSesion.nombres} ${usuarioSesion.apePaterno}`.trim();
-      const cargoTexto = formatearCargoTexto(usuarioSesion.cargo);
-      document.getElementById('userInfo').innerText = `👋 Hola, ${nombreCompleto} (${cargoTexto})`;
+      
+      formatearCargoTexto(usuarioSesion.cargo, (cargoTexto) => {
+        document.getElementById('userInfo').innerText = `👋 Hola, ${nombreCompleto} (${cargoTexto})`;
+      });
+
+      // Validar visualización exclusiva del botón de añadir/eliminar cargo según rol Admin
+      const divAdminCargos = document.getElementById('adminBotonesCargo');
+      if (divAdminCargos) {
+        if (usuarioSesion.cargo === 'admin') {
+          divAdminCargos.classList.remove('hidden');
+        } else {
+          divAdminCargos.classList.add('hidden');
+        }
+      }
 
       if (usuarioSesion.esTecnico) {
         document.getElementById('vistaTecnico').classList.remove('hidden');
@@ -459,7 +569,7 @@
     }
 
     function aplicarPermisosEnInterfaz() {
-      const p = usuarioSesion.permisos;
+      const p = usuarioSesion.permisos || { verCalendario: true, exportar: true, limpiar: false, gestion: true };
 
       document.getElementById('btnExportar').style.display = p.exportar ? "block" : "none";
       document.getElementById('btnLimpiarHistorial').style.display = p.limpiar ? "block" : "none";
@@ -495,7 +605,18 @@
       document.getElementById('editandoId').value = "";
       document.getElementById('nuUsuario').disabled = false;
       document.querySelector('#modalPersonal form').reset();
-      controlarSelectorCuadrilla();
+      
+      // Validar si muestra botones de cargo en modal nuevo
+      const divAdminCargos = document.getElementById('adminBotonesCargo');
+      if (divAdminCargos) {
+        if (usuarioSesion && usuarioSesion.cargo === 'admin') {
+          divAdminCargos.classList.remove('hidden');
+        } else {
+          divAdminCargos.classList.add('hidden');
+        }
+      }
+
+      poblarSelectorCargos('jefe_cuadrilla');
       document.getElementById('modalPersonal').classList.remove('hidden');
     }
 
@@ -514,9 +635,19 @@
         document.getElementById('nuApeMaterno').value = u.apeMaterno || "";
         document.getElementById('nuDni').value = u.dni || "";
         document.getElementById('nuTelefono').value = u.telefono || "";
-        document.getElementById('nuCargo').value = u.cargo || (u.esTecnico ? 'jefe_cuadrilla' : 'admin');
         
-        controlarSelectorCuadrilla();
+        // Validar si muestra botones de cargo en modal editar
+        const divAdminCargos = document.getElementById('adminBotonesCargo');
+        if (divAdminCargos) {
+          if (usuarioSesion && usuarioSesion.cargo === 'admin') {
+            divAdminCargos.classList.remove('hidden');
+          } else {
+            divAdminCargos.classList.add('hidden');
+          }
+        }
+
+        poblarSelectorCargos(u.cargo);
+
         if (u.cuadrillaAsignada) {
           document.getElementById('nuCuadrillaAsignada').value = u.cuadrillaAsignada;
         }
@@ -873,31 +1004,29 @@
       const dni = document.getElementById('nuDni').value.trim();
       const telefono = document.getElementById('nuTelefono').value.trim();
       const pass = document.getElementById('nuPass').value.trim();
-      const cargo = document.getElementById('nuCargo').value;
-      const cuadrillaAsignada = (cargo === 'jefe_cuadrilla') ? document.getElementById('nuCuadrillaAsignada').value : "";
+      const cargoKey = document.getElementById('nuCargo').value;
+      const cuadrillaAsignada = !document.getElementById('contenedorCuadrillaAsignada').classList.contains('hidden') ? document.getElementById('nuCuadrillaAsignada').value : "";
 
       if (dni.length !== 8) return alert("El DNI debe tener exactamente 8 dígitos.");
       if (telefono.length !== 9) return alert("El teléfono debe tener exactamente 9 dígitos.");
 
-      const esTecnico = (cargo === 'jefe_cuadrilla');
-      let permisos = { verCalendario: true, exportar: true, limpiar: false, gestion: false };
-      if (cargo === 'jefe_cuadrilla') {
-        permisos = { verCalendario: false, exportar: false, limpiar: false, gestion: false };
-      } else if (cargo === 'admin') {
-        permisos = { verCalendario: true, exportar: true, limpiar: true, gestion: true };
-      }
+      obtenerCargos((cargos) => {
+        const cInfo = cargos[cargoKey] || { esTecnico: false, permisos: { verCalendario: true, exportar: true, limpiar: false, gestion: false } };
+        const esTecnico = cInfo.esTecnico;
+        const permisos = cInfo.permisos;
 
-      obtenerUsuarios((users) => {
-        if (!editId && users[id]) return alert("El ID de usuario ya existe.");
+        obtenerUsuarios((users) => {
+          if (!editId && users[id]) return alert("El ID de usuario ya existe.");
 
-        const targetId = editId || id;
-        users[targetId] = { pass, nombres, apePaterno, apeMaterno, dni, telefono, cargo, cuadrillaAsignada, esTecnico, permisos };
-        
-        guardarUsuariosEnNube(users);
-        cerrarModalPersonal();
-        poblarSelectorCuadrillasCalendario();
-        renderizarTablaUsuarios();
-        alert(editId ? `¡Personal actualizado en la nube!` : `¡Personal registrado en la nube con éxito!`);
+          const targetId = editId || id;
+          users[targetId] = { pass, nombres, apePaterno, apeMaterno, dni, telefono, cargo: cargoKey, cuadrillaAsignada, esTecnico, permisos };
+          
+          guardarUsuariosEnNube(users);
+          cerrarModalPersonal();
+          poblarSelectorCuadrillasCalendario();
+          renderizarTablaUsuarios();
+          alert(editId ? `¡Personal actualizado en la nube!` : `¡Personal registrado en la nube con éxito!`);
+        });
       });
     }
 
@@ -916,29 +1045,32 @@
 
     function renderizarTablaUsuarios() {
       const tbody = document.getElementById('tablaUsuariosBody');
-      obtenerUsuarios((users) => {
-        tbody.innerHTML = Object.keys(users).map(id => {
-          const u = users[id];
-          const apellidosNombres = `${u.apePaterno || ''} ${u.apeMaterno || ''}, ${u.nombres || ''}`;
-          const cargoInfo = u.cargo === 'jefe_cuadrilla' ? `JEFE CUADRILLA (${u.cuadrillaAsignada || 'Sin Asignar'})` : formatearCargoTexto(u.cargo);
-          
-          return `
-            <tr class="hover:bg-slate-800/40 transition">
-              <td class="p-2 font-mono font-bold text-emerald-400">${id}</td>
-              <td class="p-2 font-mono text-amber-300">${u.pass || '••••'}</td>
-              <td class="p-2 text-slate-200">${apellidosNombres}</td>
-              <td class="p-2 font-mono">${u.dni || 'N/A'}</td>
-              <td class="p-2 font-mono">${u.telefono || 'N/A'}</td>
-              <td class="p-2"><span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">${cargoInfo}</span></td>
-              <td class="p-2 space-x-2">
-                <button onclick="abrirModalEditar('${id}')" class="text-amber-400 hover:text-amber-300 font-bold text-[11px]">✏️ Editar</button>
-                ${(id !== 'admin' && usuarioSesion.permisos.gestion) 
-                  ? `<button onclick="eliminarUsuario('${id}')" class="text-rose-400 hover:text-rose-300 font-bold text-[11px]">🗑️ Eliminar</button>` 
-                  : `<span class="text-slate-600 text-[10px]">Protegido</span>`}
-              </td>
-            </tr>
-          `;
-        }).join('');
+      obtenerCargos((cargos) => {
+        obtenerUsuarios((users) => {
+          tbody.innerHTML = Object.keys(users).map(id => {
+            const u = users[id];
+            const apellidosNombres = `${u.apePaterno || ''} ${u.apeMaterno || ''}, ${u.nombres || ''}`;
+            const cNombre = cargos[u.cargo] ? cargos[u.cargo].nombre.toUpperCase() : 'PERSONAL';
+            const cargoInfo = u.cargo === 'jefe_cuadrilla' ? `${cNombre} (${u.cuadrillaAsignada || 'Sin Asignar'})` : cNombre;
+            
+            return `
+              <tr class="hover:bg-slate-800/40 transition">
+                <td class="p-2 font-mono font-bold text-emerald-400">${id}</td>
+                <td class="p-2 font-mono text-amber-300">${u.pass || '••••'}</td>
+                <td class="p-2 text-slate-200">${apellidosNombres}</td>
+                <td class="p-2 font-mono">${u.dni || 'N/A'}</td>
+                <td class="p-2 font-mono">${u.telefono || 'N/A'}</td>
+                <td class="p-2"><span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">${cargoInfo}</span></td>
+                <td class="p-2 space-x-2">
+                  <button onclick="abrirModalEditar('${id}')" class="text-amber-400 hover:text-amber-300 font-bold text-[11px]">✏️ Editar</button>
+                  ${(id !== 'admin' && usuarioSesion.permisos.gestion) 
+                    ? `<button onclick="eliminarUsuario('${id}')" class="text-rose-400 hover:text-rose-300 font-bold text-[11px]">🗑️ Eliminar</button>` 
+                    : `<span class="text-slate-600 text-[10px]">Protegido</span>`}
+                </td>
+              </tr>
+            `;
+          }).join('');
+        });
       });
     }
 
