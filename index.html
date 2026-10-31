@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Control PEXT - Bantel</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Firebase App & Realtime Database SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
   <style>
     .bg-dark { background-color: #0F172A; }
     .card-dark { background-color: #1E293B; border-color: #334155; }
@@ -16,12 +21,12 @@
 </head>
 <body class="bg-dark text-slate-100 min-h-screen font-sans flex flex-col justify-between antialiased selection:bg-emerald-500 selection:text-slate-950">
 
-  <!-- BARRA DE NAVEGACIÓN CON SALUDO -->
+  <!-- BARRA DE NAVEGACIÓN -->
   <header id="appHeader" class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-3 py-3 sticky top-0 z-50 shadow-md hidden">
     <div class="max-w-5xl mx-auto flex flex-wrap justify-between items-center gap-2">
       <div class="flex items-center space-x-2">
         <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-        <span class="font-extrabold text-emerald-400 text-sm sm:text-base tracking-wide">PEXT CONTROL</span>
+        <span class="font-extrabold text-emerald-400 text-sm sm:text-base tracking-wide">PEXT CONTROL (NUBE)</span>
       </div>
       <div class="flex items-center space-x-2">
         <span id="userInfo" class="text-[11px] sm:text-xs font-bold bg-slate-800 text-emerald-400 px-2.5 py-1.5 rounded-xl border border-slate-700 truncate max-w-[200px] sm:max-w-xs"></span>
@@ -40,25 +45,25 @@
       <div class="card-dark border p-5 sm:p-6 rounded-2xl shadow-2xl">
         <div class="text-center mb-5">
           <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
-            <span class="text-2xl">🔒</span>
+            <span class="text-2xl">☁️</span>
           </div>
           <h2 class="text-lg sm:text-xl font-extrabold text-emerald-400">Iniciar Sesión</h2>
-          <p class="text-[11px] sm:text-xs text-slate-400 mt-1">Control de Campo Bantel PEXT</p>
+          <p class="text-[11px] sm:text-xs text-slate-400 mt-1">Control Cloud Bantel PEXT</p>
         </div>
 
         <form onsubmit="ejecutarLogin(event)" class="space-y-3.5">
           <div>
             <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">Usuario:</label>
-            <input type="text" id="inputUsuario" placeholder="USER" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm">
+            <input type="text" id="inputUsuario" placeholder="Ej: admin o cuadrilla1" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm">
           </div>
 
           <div>
             <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">PIN / Contraseña:</label>
-            <input type="password" id="inputPassword" placeholder="PASSWORD" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm">
+            <input type="password" id="inputPassword" placeholder="••••" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-semibold p-3 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm">
           </div>
 
           <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold py-3.5 rounded-xl shadow-lg transition text-xs sm:text-sm mt-2">
-            Ingresar
+            Ingresar a la Nube
           </button>
         </form>
 
@@ -66,7 +71,11 @@
           Usuario o PIN incorrecto.
         </div>
 
-       
+        <div class="mt-5 pt-3 border-t border-slate-800 text-[11px] text-slate-500 space-y-0.5">
+          <p class="font-bold text-slate-400 mb-1">Accesos por defecto:</p>
+          <p>• Admin: <strong>admin</strong> (1234)</p>
+          <p>• Jefe Cuadrilla 1: <strong>cuadrilla1</strong> (1111)</p>
+        </div>
       </div>
     </section>
 
@@ -121,8 +130,8 @@
     <section id="vistaMonitoreo" class="w-full space-y-4 sm:space-y-6 hidden">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
-          <h2 id="tituloPanelMonitoreo" class="text-xl sm:text-2xl font-bold text-emerald-400">Panel de Control & Monitoreo</h2>
-          <p class="text-[11px] sm:text-xs text-slate-400">Control de asistencia, rutas y tiempos por fecha</p>
+          <h2 id="tituloPanelMonitoreo" class="text-xl sm:text-2xl font-bold text-emerald-400">Panel Cloud & Monitoreo</h2>
+          <p class="text-[11px] sm:text-xs text-slate-400">Sincronizado en tiempo real</p>
         </div>
         <div class="flex flex-wrap gap-2 w-full sm:w-auto">
           <button id="btnExportar" onclick="exportarCSV()" class="flex-1 sm:flex-none bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 px-3 py-2 rounded-xl text-xs font-bold transition hidden">
@@ -168,10 +177,10 @@
         <div id="listaEventosCalendario" class="space-y-3"></div>
       </div>
 
-      <!-- SECCIÓN 3: GESTIÓN DE USUARIOS CON TABLA Y CREDENCIALES -->
+      <!-- SECCIÓN 3: GESTIÓN DE USUARIOS -->
       <div id="seccionGestionUsuarios" class="card-dark border rounded-2xl p-4 sm:p-5 shadow-2xl space-y-4 hidden">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-3">
-          <h3 class="text-sm sm:text-base font-bold text-emerald-400">👥 Gestión de Personal y Credenciales</h3>
+          <h3 class="text-sm sm:text-base font-bold text-emerald-400">👥 Gestión de Personal (Nube)</h3>
           <button onclick="abrirModalCrear()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs px-4 py-2.5 rounded-xl transition shadow">
             ➕ Registrar Nuevo Personal
           </button>
@@ -263,11 +272,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800">
           <div>
             <label class="block text-[11px] font-semibold text-slate-400 mb-1">Usuario ID (Login):</label>
-            <input type="text" id="nuUsuario" placeholder="USER" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none font-mono">
+            <input type="text" id="nuUsuario" placeholder="ej: cuadrilla1" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none font-mono">
           </div>
           <div>
             <label class="block text-[11px] font-semibold text-slate-400 mb-1">PIN / Contraseña:</label>
-            <input type="text" id="nuPass" placeholder="PASSWORD" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none font-mono">
+            <input type="text" id="nuPass" placeholder="••••" required class="w-full bg-slate-900 border border-slate-700 text-emerald-400 text-xs p-2.5 rounded-xl outline-none font-mono">
           </div>
         </div>
 
@@ -276,7 +285,7 @@
             Cancelar
           </button>
           <button type="submit" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold text-xs px-5 py-3 sm:py-2.5 rounded-xl transition shadow">
-            Guardar Cambios
+            Guardar en la Nube
           </button>
         </div>
       </form>
@@ -284,11 +293,26 @@
   </div>
 
   <footer class="text-center text-slate-600 text-[11px] py-3 border-t border-slate-800/50">
-    Bantel PEXT Control &bull; Cambio 00:00 hrs
+    Bantel PEXT Control &bull; Firebase Realtime DB Cloud
   </footer>
 
-  <!-- SCRIPT -->
+  <!-- SCRIPT DE CONFIGURACIÓN Y CONEXIÓN CLOUD -->
   <script>
+    // Configuración oficial de tu proyecto Firebase (controlpersonal-79f02)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAOk4hyvVBwFmEuFPJVNFASr9hiHP-ZLTg",
+      authDomain: "controlpersonal-79f02.firebaseapp.com",
+      databaseURL: "https://controlpersonal-79f02-default-rtdb.firebaseio.com",
+      projectId: "controlpersonal-79f02",
+      storageBucket: "controlpersonal-79f02.firebasestorage.app",
+      messagingSenderId: "281652317975",
+      appId: "1:281652317975:web:2cf16b92ea5d74ca3ab152",
+      measurementId: "G-R6DY87Z5F7"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     const USUARIOS_BASE = {
       "admin": { 
         pass: "1234", 
@@ -329,12 +353,29 @@
       fechaUltimoUso: "" 
     };
 
-    function obtenerUsuarios() {
-      return JSON.parse(localStorage.getItem('usuarios_sistema')) || USUARIOS_BASE;
+    function obtenerUsuarios(callback) {
+      db.ref('usuarios_sistema').once('value').then((snapshot) => {
+        const data = snapshot.val();
+        if (!data) {
+          db.ref('usuarios_sistema').set(USUARIOS_BASE);
+          callback(USUARIOS_BASE);
+        } else {
+          callback(data);
+        }
+      });
     }
 
-    function guardarUsuarios(users) {
-      localStorage.setItem('usuarios_sistema', JSON.stringify(users));
+    function guardarUsuariosEnNube(users) {
+      db.ref('usuarios_sistema').set(users);
+    }
+
+    function obtenerRegistrosNube(callback) {
+      db.ref('registros_cuadrillas').once('value').then((snapshot) => {
+        const data = snapshot.val();
+        if (!data) return callback([]);
+        const lista = Object.keys(data).map(key => ({ ...data[key], firebaseKey: key }));
+        callback(lista);
+      });
     }
 
     function validarSoloNumeros(input, maxLen) {
@@ -388,17 +429,18 @@
       e.preventDefault();
       const u = document.getElementById('inputUsuario').value.trim().toLowerCase();
       const p = document.getElementById('inputPassword').value.trim();
-      const users = obtenerUsuarios();
 
-      if (users[u] && users[u].pass === p) {
-        usuarioSesion = users[u];
-        usuarioSesion.id = u;
-        document.getElementById('loginError').classList.add('hidden');
-        document.getElementById('inputPassword').value = '';
-        iniciarApp();
-      } else {
-        document.getElementById('loginError').classList.remove('hidden');
-      }
+      obtenerUsuarios((users) => {
+        if (users[u] && users[u].pass === p) {
+          usuarioSesion = users[u];
+          usuarioSesion.id = u;
+          document.getElementById('loginError').classList.add('hidden');
+          document.getElementById('inputPassword').value = '';
+          iniciarApp();
+        } else {
+          document.getElementById('loginError').classList.remove('hidden');
+        }
+      });
     }
 
     function iniciarApp() {
@@ -462,28 +504,29 @@
     }
 
     function abrirModalEditar(id) {
-      const users = obtenerUsuarios();
-      const u = users[id];
-      if (!u) return;
+      obtenerUsuarios((users) => {
+        const u = users[id];
+        if (!u) return;
 
-      document.getElementById('modalTitulo').innerText = `✏️ Editar Personal: ${id}`;
-      document.getElementById('editandoId').value = id;
-      document.getElementById('nuUsuario').value = id;
-      document.getElementById('nuUsuario').disabled = true;
-      document.getElementById('nuPass').value = u.pass || "";
-      document.getElementById('nuNombres').value = u.nombres || "";
-      document.getElementById('nuApePaterno').value = u.apePaterno || "";
-      document.getElementById('nuApeMaterno').value = u.apeMaterno || "";
-      document.getElementById('nuDni').value = u.dni || "";
-      document.getElementById('nuTelefono').value = u.telefono || "";
-      document.getElementById('nuCargo').value = u.cargo || (u.esTecnico ? 'jefe_cuadrilla' : 'admin');
-      
-      controlarSelectorCuadrilla();
-      if (u.cuadrillaAsignada) {
-        document.getElementById('nuCuadrillaAsignada').value = u.cuadrillaAsignada;
-      }
+        document.getElementById('modalTitulo').innerText = `✏️ Editar Personal: ${id}`;
+        document.getElementById('editandoId').value = id;
+        document.getElementById('nuUsuario').value = id;
+        document.getElementById('nuUsuario').disabled = true;
+        document.getElementById('nuPass').value = u.pass || "";
+        document.getElementById('nuNombres').value = u.nombres || "";
+        document.getElementById('nuApePaterno').value = u.apePaterno || "";
+        document.getElementById('nuApeMaterno').value = u.apeMaterno || "";
+        document.getElementById('nuDni').value = u.dni || "";
+        document.getElementById('nuTelefono').value = u.telefono || "";
+        document.getElementById('nuCargo').value = u.cargo || (u.esTecnico ? 'jefe_cuadrilla' : 'admin');
+        
+        controlarSelectorCuadrilla();
+        if (u.cuadrillaAsignada) {
+          document.getElementById('nuCuadrillaAsignada').value = u.cuadrillaAsignada;
+        }
 
-      document.getElementById('modalPersonal').classList.remove('hidden');
+        document.getElementById('modalPersonal').classList.remove('hidden');
+      });
     }
 
     function cerrarModalPersonal() {
@@ -591,13 +634,13 @@
       estadoCiclo.salioDeBase = true;
       guardarEstadoLocal();
       actualizarBotonesSecuencia();
-      obtenerGPSSeguro((lat, lng) => guardarRegistroServidor("Salida de Base", `Base (Salida #${estadoCiclo.jornadaNum})`, lat, lng));
+      obtenerGPSSeguro((lat, lng) => guardarRegistroNube("Salida de Base", `Base (Salida #${estadoCiclo.jornadaNum})`, lat, lng));
     }
 
     function solicitarNombrePunto() {
       if (!estadoCiclo.salioDeBase || (estadoCiclo.puntoActivoNum > 0 && !estadoCiclo.finTrabajoMarcado)) return;
       
-      const nombreActividad = prompt("Ingresa el nombre o detalle de lo que se realizará en este punto:\n(Ej: averia / certificacion / inspeccion / otro)");
+      const nombreActividad = prompt("Ingresa el nombre o detalle de lo que se realizará en este punto:\n(Ej: Instalación de acometida / Mantenimiento NAP)");
       if (!nombreActividad || nombreActividad.trim() === "") return;
 
       estadoCiclo.puntoActivoNum += 1;
@@ -615,7 +658,7 @@
       guardarEstadoLocal();
       actualizarBotonesSecuencia();
       const lugar = `${estadoCiclo.nombrePuntoActivo} (S#${estadoCiclo.jornadaNum} - P#${estadoCiclo.puntoActivoNum})`;
-      obtenerGPSSeguro((lat, lng) => guardarRegistroServidor("Llegada a Punto", lugar, lat, lng));
+      obtenerGPSSeguro((lat, lng) => guardarRegistroNube("Llegada a Punto", lugar, lat, lng));
     }
 
     function marcarFinTrabajo() {
@@ -625,7 +668,7 @@
       guardarEstadoLocal();
       actualizarBotonesSecuencia();
       const lugar = `${estadoCiclo.nombrePuntoActivo} (S#${estadoCiclo.jornadaNum} - P#${estadoCiclo.puntoActivoNum})`;
-      obtenerGPSSeguro((lat, lng) => guardarRegistroServidor("Fin de Trabajo", lugar, lat, lng));
+      obtenerGPSSeguro((lat, lng) => guardarRegistroNube("Fin de Trabajo", lugar, lat, lng));
     }
 
     function marcarRegresoBase() {
@@ -644,7 +687,7 @@
       };
       guardarEstadoLocal();
       actualizarBotonesSecuencia();
-      obtenerGPSSeguro((lat, lng) => guardarRegistroServidor("Regreso a Base", `Base (Cierre Salida #${jornadaActual})`, lat, lng));
+      obtenerGPSSeguro((lat, lng) => guardarRegistroNube("Regreso a Base", `Base (Cierre Salida #${jornadaActual})`, lat, lng));
     }
 
     function obtenerGPSSeguro(callback) {
@@ -656,7 +699,7 @@
       );
     }
 
-    function guardarRegistroServidor(hito, lugar, lat, lng) {
+    function guardarRegistroNube(hito, lugar, lat, lng) {
       const { fechaIso, horaStr } = obtenerFechaHoraLocal();
       const nombreCuadrilla = usuarioSesion.cuadrillaAsignada || `${usuarioSesion.nombres} ${usuarioSesion.apePaterno}`;
       
@@ -672,18 +715,8 @@
         lng: lng
       };
 
-      let regs = [];
-      try {
-        const guardados = localStorage.getItem('registros_cuadrillas');
-        if (guardados) regs = JSON.parse(guardados);
-      } catch (e) {
-        regs = [];
-      }
-
-      regs.unshift(nuevo);
-      localStorage.setItem('registros_cuadrillas', JSON.stringify(regs));
-      
-      mostrarNotificacion(`✅ Registrado: ${hito} a las ${horaStr}`);
+      db.ref('registros_cuadrillas').push(nuevo);
+      mostrarNotificacion(`✅ Registrado en la nube: ${hito} a las ${horaStr}`);
     }
 
     function mostrarNotificacion(txt) {
@@ -692,7 +725,7 @@
       alertBox.innerText = txt;
     }
 
-    /* CALENDARIO */
+    /* CALENDARIO Y ADMINISTRACIÓN */
     function inicializarAdminView() {
       const { fechaIso } = obtenerFechaHoraLocal();
       document.getElementById('calendarioDiario').value = fechaIso;
@@ -720,13 +753,15 @@
       const fechaVal = document.getElementById('calendarioDiario').value;
       if (!fechaVal) return;
       document.getElementById('lblFechaSeleccionada').innerText = fechaVal;
-      renderizarResumenDia(fechaVal);
-      renderizarListadoEventosDia();
+      
+      obtenerRegistrosNube((regs) => {
+        renderizarResumenDia(fechaVal, regs);
+        renderizarListadoEventosDia(fechaVal, regs);
+      });
     }
 
-    function renderizarResumenDia(fechaIso) {
+    function renderizarResumenDia(fechaIso, regs) {
       const cont = document.getElementById('resumenDiaContainer');
-      const regs = JSON.parse(localStorage.getItem('registros_cuadrillas') || '[]');
       const regsDia = regs.filter(r => r.fecha === fechaIso);
 
       const cuadrillasFijas = ["Cuadrilla 1", "Cuadrilla 2", "Cuadrilla 3"];
@@ -751,20 +786,19 @@
 
     function filtrarCuadrillaCalendario(nombre) {
       document.getElementById('filtroCuadrillaCalendario').value = nombre;
-      renderizarListadoEventosDia();
+      actualizarVistaCalendario();
     }
 
-    function renderizarListadoEventosDia() {
+    function renderizarListadoEventosDia(fechaIso, regs) {
       const cont = document.getElementById('listaEventosCalendario');
-      const fechaIso = document.getElementById('calendarioDiario').value;
       if (!fechaIso) return;
 
-      let regs = JSON.parse(localStorage.getItem('registros_cuadrillas') || '[]').filter(r => r.fecha === fechaIso);
+      let regsDia = regs.filter(r => r.fecha === fechaIso);
       const fCuadrilla = document.getElementById('filtroCuadrillaCalendario').value;
-      if (fCuadrilla !== 'todas') regs = regs.filter(r => r.cuadrilla === fCuadrilla);
+      if (fCuadrilla !== 'todas') regsDia = regsDia.filter(r => r.cuadrilla === fCuadrilla);
 
       const grupos = {};
-      regs.forEach(r => {
+      regsDia.forEach(r => {
         if (!r.lugar.includes('Base')) {
           const clave = `${r.cuadrilla} - ${r.lugar}`;
           if (!grupos[clave]) grupos[clave] = [];
@@ -857,76 +891,79 @@
         permisos = { verCalendario: true, exportar: true, limpiar: true, gestion: true };
       }
 
-      const users = obtenerUsuarios();
-      if (!editId && users[id]) return alert("El ID de usuario ya existe.");
+      obtenerUsuarios((users) => {
+        if (!editId && users[id]) return alert("El ID de usuario ya existe.");
 
-      const targetId = editId || id;
-      users[targetId] = { pass, nombres, apePaterno, apeMaterno, dni, telefono, cargo, cuadrillaAsignada, esTecnico, permisos };
-      guardarUsuarios(users);
-      
-      cerrarModalPersonal();
-      poblarSelectorCuadrillasCalendario();
-      renderizarTablaUsuarios();
-      alert(editId ? `¡Personal actualizado con éxito!` : `¡Personal registrado con éxito!`);
+        const targetId = editId || id;
+        users[targetId] = { pass, nombres, apePaterno, apeMaterno, dni, telefono, cargo, cuadrillaAsignada, esTecnico, permisos };
+        
+        guardarUsuariosEnNube(users);
+        cerrarModalPersonal();
+        poblarSelectorCuadrillasCalendario();
+        renderizarTablaUsuarios();
+        alert(editId ? `¡Personal actualizado en la nube!` : `¡Personal registrado en la nube con éxito!`);
+      });
     }
 
     function eliminarUsuario(id) {
       if (!usuarioSesion.permisos.gestion) return alert("Acción no permitida.");
       if (id === 'admin') return alert("No se puede eliminar al admin principal.");
       if (confirm(`¿Eliminar al usuario '${id}'?`)) {
-        const users = obtenerUsuarios();
-        delete users[id];
-        guardarUsuarios(users);
-        poblarSelectorCuadrillasCalendario();
-        renderizarTablaUsuarios();
+        obtenerUsuarios((users) => {
+          delete users[id];
+          guardarUsuariosEnNube(users);
+          poblarSelectorCuadrillasCalendario();
+          renderizarTablaUsuarios();
+        });
       }
     }
 
     function renderizarTablaUsuarios() {
       const tbody = document.getElementById('tablaUsuariosBody');
-      const users = obtenerUsuarios();
-
-      tbody.innerHTML = Object.keys(users).map(id => {
-        const u = users[id];
-        const apellidosNombres = `${u.apePaterno || ''} ${u.apeMaterno || ''}, ${u.nombres || ''}`;
-        const cargoInfo = u.cargo === 'jefe_cuadrilla' ? `JEFE CUADRILLA (${u.cuadrillaAsignada || 'Sin Asignar'})` : formatearCargoTexto(u.cargo);
-        
-        return `
-          <tr class="hover:bg-slate-800/40 transition">
-            <td class="p-2 font-mono font-bold text-emerald-400">${id}</td>
-            <td class="p-2 font-mono text-amber-300">${u.pass || '••••'}</td>
-            <td class="p-2 text-slate-200">${apellidosNombres}</td>
-            <td class="p-2 font-mono">${u.dni || 'N/A'}</td>
-            <td class="p-2 font-mono">${u.telefono || 'N/A'}</td>
-            <td class="p-2"><span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">${cargoInfo}</span></td>
-            <td class="p-2 space-x-2">
-              <button onclick="abrirModalEditar('${id}')" class="text-amber-400 hover:text-amber-300 font-bold text-[11px]">✏️ Editar</button>
-              ${(id !== 'admin' && usuarioSesion.permisos.gestion) 
-                ? `<button onclick="eliminarUsuario('${id}')" class="text-rose-400 hover:text-rose-300 font-bold text-[11px]">🗑️ Eliminar</button>` 
-                : `<span class="text-slate-600 text-[10px]">Protegido</span>`}
-            </td>
-          </tr>
-        `;
-      }).join('');
+      obtenerUsuarios((users) => {
+        tbody.innerHTML = Object.keys(users).map(id => {
+          const u = users[id];
+          const apellidosNombres = `${u.apePaterno || ''} ${u.apeMaterno || ''}, ${u.nombres || ''}`;
+          const cargoInfo = u.cargo === 'jefe_cuadrilla' ? `JEFE CUADRILLA (${u.cuadrillaAsignada || 'Sin Asignar'})` : formatearCargoTexto(u.cargo);
+          
+          return `
+            <tr class="hover:bg-slate-800/40 transition">
+              <td class="p-2 font-mono font-bold text-emerald-400">${id}</td>
+              <td class="p-2 font-mono text-amber-300">${u.pass || '••••'}</td>
+              <td class="p-2 text-slate-200">${apellidosNombres}</td>
+              <td class="p-2 font-mono">${u.dni || 'N/A'}</td>
+              <td class="p-2 font-mono">${u.telefono || 'N/A'}</td>
+              <td class="p-2"><span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">${cargoInfo}</span></td>
+              <td class="p-2 space-x-2">
+                <button onclick="abrirModalEditar('${id}')" class="text-amber-400 hover:text-amber-300 font-bold text-[11px]">✏️ Editar</button>
+                ${(id !== 'admin' && usuarioSesion.permisos.gestion) 
+                  ? `<button onclick="eliminarUsuario('${id}')" class="text-rose-400 hover:text-rose-300 font-bold text-[11px]">🗑️ Eliminar</button>` 
+                  : `<span class="text-slate-600 text-[10px]">Protegido</span>`}
+              </td>
+            </tr>
+          `;
+        }).join('');
+      });
     }
 
     function exportarCSV() {
       if (!usuarioSesion.permisos.exportar) return alert("No tienes permiso.");
-      const regs = JSON.parse(localStorage.getItem('registros_cuadrillas') || '[]');
-      if (regs.length === 0) return alert("Sin datos.");
-      let csv = "ID,Hora,Fecha,Cuadrilla,Lugar,Hito,Lat,Lng\n";
-      regs.forEach(r => csv += `"${r.id}","${r.hora}","${r.fecha}","${r.cuadrilla}","${r.lugar}","${r.hito}","${r.lat || ''}","${r.lng || ''}"\n`);
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `Reporte_${new Date().toISOString().slice(0,10)}.csv`;
-      a.click();
+      obtenerRegistrosNube((regs) => {
+        if (regs.length === 0) return alert("Sin datos en la nube.");
+        let csv = "ID,Hora,Fecha,Cuadrilla,Lugar,Hito,Lat,Lng\n";
+        regs.forEach(r => csv += `"${r.id}","${r.hora}","${r.fecha}","${r.cuadrilla}","${r.lugar}","${r.hito}","${r.lat || ''}","${r.lng || ''}"\n`);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `Reporte_Cloud_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+      });
     }
 
     function limpiarRegistros() {
       if (!usuarioSesion.permisos.limpiar) return alert("No tienes permisos.");
-      if (confirm("¿Borrar todo el historial?")) {
-        localStorage.removeItem('registros_cuadrillas');
+      if (confirm("¿Borrar todo el historial de la nube?")) {
+        db.ref('registros_cuadrillas').remove();
         actualizarVistaCalendario();
       }
     }
